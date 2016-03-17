@@ -8,7 +8,7 @@
 	define('DB_HOST', 'localhost');
 	define('DB_NAME', 'save_baltimore');
 
-	$dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
+	$dbc = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
 	$sql = "SELECT * FROM `baltimore_crime_data` WHERE 1";
 	if(array_key_exists("district", $_GET))
 		$sql .= " AND `district` = \"" . $_GET['district'] . '"';
@@ -21,7 +21,7 @@
 	if(array_key_exists("weapon", $_GET))
 		$sql .= " AND `weapon` = \"" . $_GET['weapon'] . '"';
 
-	$results = mysqli_query($dbc, $sql);
+	$results = $dbc->query($sql);
 	
 	$data = array();
 	while($row = mysqli_fetch_assoc($results)){
