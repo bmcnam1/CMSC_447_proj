@@ -25,11 +25,11 @@
  
     ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
 	define('DB_USER', 'root');
-	define('DB_PASSWORD', 'bmcnam1');
-	define('DB_HOST', 'localhost');
-	define('DB_NAME', 'cmsc_447');
+  define('DB_PASSWORD', 'cmsc447');
+  define('DB_HOST', 'localhost');
+  define('DB_NAME', 'save_baltimore');
 	
-	$TABLE_NAME = "baltimore_crime_data";
+	$TABLE_NAME = "Baltimore_Crime_Data";
 	//connect to the database 
  	$sql = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
 	
@@ -42,17 +42,13 @@
 	
 	$latitudes = array(); //use these arrays for Google heat map api
 	$longitudes = array(); 
-	
+  $counter = 0;
 	while($row = mysqli_fetch_assoc($results)){ //loop through queryed items
 		//$data[] = $row;
 		$latitudes[$counter] = $row['latitude'];    //store latitudes 
 		$longitudes[$counter] = $row['longitude'];  //store longitues
-		
-		
+		$counter++;		
 	}
-	
-	//$json = json_encode($data);
-	
  ?>
  
   <head>
