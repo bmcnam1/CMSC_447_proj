@@ -48,7 +48,6 @@
 		if(par > 0){
 			datalocation += url.substr(par);
 		}
-		alert(datalocation);
 		data.open("get", datalocation , true);
 		data.send();
 

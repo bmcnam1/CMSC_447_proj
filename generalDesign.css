@@ -95,3 +95,8 @@ tr.companyRow > td
 :-ms-input-placeholder {  
    color: #981B46;  
 }
+
+.checks{
+	z-index: 5;
+	display: none;
+}

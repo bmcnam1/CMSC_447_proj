@@ -22,21 +22,16 @@
  
  
  <?php
- 
-    ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
-	define('DB_USER', 'root');
-  define('DB_PASSWORD', 'cmsc447');
-  define('DB_HOST', 'localhost');
-  define('DB_NAME', 'save_baltimore');
-	
-	$TABLE_NAME = "Baltimore_Crime_Data";
-	//connect to the database 
- 	$sql = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
-	
+ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
+define('DB_USER', 'root');
+define('DB_PASSWORD', 'cmsc447');
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'save_baltimore');
+  require ("query.php");
 	//query string - **only fetch the first 400 rows
-	$query = "SELECT * FROM $TABLE_NAME limit 400";
-	//exceute query
-	$results = $sql->query($query);
+  $TABLE_NAME = "Baltimore_Crime_Data";
+	$sql = "SELECT * FROM $TABLE_NAME limit 400";
+	$results = query($sql);
 
 	//$data = array();
 	

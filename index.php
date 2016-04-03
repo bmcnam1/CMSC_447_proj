@@ -3,15 +3,30 @@
     Eachtab is an html iframe to another webpage: current example of 
     this is being done with the Map.php file (see below)
 -->
-
+<?php 
+require("query.php");
+ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
+define('DB_USER', 'root');
+define('DB_PASSWORD', 'cmsc447');
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'save_baltimore');
+function checks($field){
+    
+    $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
+    $results = query($sql);
+    while ($row = mysqli_fetch_assoc($results) ) {
+        echo "<input type=\"checkbox\" value=\"" . $row[$field] . "\">" . $row[$field];
+    }
+}
+?>
 <html>
-<link href="generalDesign.css" rel="stylesheet" type="text/css">
-  
-<title>Indigo</title>
+    <link href="generalDesign.css" rel="stylesheet" type="text/css">
+      
+    <title>Indigo</title>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script type="text/javascript" src="filters.js"></script>
   
   <!-- create tabPanel -->
   <script>
@@ -73,24 +88,17 @@
                 <h1> Filter </h1><br><br>
             _____________________________<br>
                      <p1>District</p1><br>
-                     <select name="district" id="district">
-                            <option value="blank" name"blank" id="blank"></option>
-                            <option value=1>XXXXX</option>
-                            <option value=2>XXXXX</option>
-                            <option value=3>XXXXX</option>
-                            <option value=4>XXXXX</option>
-                            <option value=5>XXXXX</option> 
-                     </select>
+                     <!-- District -->
+                     <button class="expand" id="district">...</button>
+                     <div class="checks" id="districtCheck">
+                        <?php checks("district");?>
+                     </div>
                      <br><br><br>
                          <p3 id="neighborhood">Neighborhood</p3><br>
-                         <select name="groupSize">
-                       		<option value="blank" name"blank" id="blank"></option>
-                            <option value=10>Shooting</option>
-                            <option value=9>Knife Attack</option>
-                            <option value=8>Domestic</option>
-                            <option value=7>Drug related</option>
-                            <option value=6>Theft</option>
-                       </select>
+                         <button class="expand" id="neighborhood">...</button>
+                     <div class="checks" id="neighborhoodCheck">
+                        <?php checks("neighborhood");?>
+                     </div>
                        <br><br><br>
                          <p3 id="streetname">Street Name</p3><br>
                          <select name="groupSize">
@@ -134,8 +142,6 @@
             <!-- user selects time in drop down box -->
                 
             <br><br><br><br><br>
-            
-            <button type="button" name="submit" id="formButton">Submit</button>
             </font>
             </form>
     		</div>
