@@ -18,6 +18,17 @@ function checks($field){
         echo "<input type=\"checkbox\" value=\"" . $row[$field] . "\">" . $row[$field];
     }
 }
+
+function options($field){
+    $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
+    $results = query($sql);
+    while ($row = mysqli_fetch_assoc($results) ) {
+        if($row[$field] == ""){
+            $row[$field] = "None";
+        }
+        echo "<option value=\"" . $row[$field] . "\">". $row[$field] . "</option>";
+    }
+}
 ?>
 <html>
     <link href="generalDesign.css" rel="stylesheet" type="text/css">
@@ -89,52 +100,36 @@ function checks($field){
             _____________________________<br>
                      <p1>District</p1><br>
                      <!-- District -->
-                     <button class="expand" id="district">...</button>
-                     <div class="checks" id="districtCheck">
-                        <?php checks("district");?>
-                     </div>
+                     <select name="neighborhood" id = "neighborhood" multiple size="5">
+                         <?php options("neighborhood");?>
+                    </select>
                      <br><br><br>
-                         <p3 id="neighborhood">Neighborhood</p3><br>
-                         <button class="expand" id="neighborhood">...</button>
-                     <div class="checks" id="neighborhoodCheck">
-                        <?php checks("neighborhood");?>
-                     </div>
+                     <p2>Nieghborhood</p2><br>
+                     <select name="neighborhood" id = "neighborhood" multiple size="5">
+                         <?php options("neighborhood");?>
+                    </select>
                        <br><br><br>
                          <p3 id="streetname">Street Name</p3><br>
-                         <select name="groupSize">
-                         	<option value="blank" name"blank" id="blank"></option>
-                            <option value=10>Shooting</option>
-                            <option value=9>Knife Attack</option>
-                            <option value=8>Domestic</option>
-                            <option value=7>Drug related</option>
-                            <option value=6>Theft</option>
-                       </select><br>
+                         <select name="streetName" id = "streetName" multiple size="5">
+                         <?php options("streetName");?>
+                    </select><br>
             			______________________________
             		   <br><br><br>                      
             <!-- user selects crime type  -->
             
-                <p3 id="neighborhood">Crime Type</p3><br>
-                         <select name="groupSize">
-                       		<option value="blank" name"blank" id="blank"></option>
-                            <option value=10>Shooting</option>
-                            <option value=9>Knife Attack</option>
-                            <option value=8>Domestic</option>
-                            <option value=7>Drug related</option>
-                            <option value=6>Theft</option>
-                       </select>
+                    <p3>Crime Type</p3><br>
+                    <select name="crimeType" id = "crimeType" multiple size="5">
+                         <?php options("crimeType");?>
+                    </select>
                        <br><br><br>
-             	<p3 id="groupNumber">Weapon </p3><br>
-                         <select name="groupSize">
-                            <option value="blank" name"blank" id="blank"></option>
-                            <option value=9>asdfjkl;</option>
-                            <option value=8>adsfjkl;</option>
-                            <option value=7>adjfkl;</option>
-                            <option value=6>asdfjkl;</option>
-                            <option value=5>asdfjkl;</option>
-                         </select><br>
+             	    <p3 id="groupNumber">Weapon </p3><br>
+                    <select name="weapon" id = "weapon" multiple size="5">
+                         <?php options("weapon");?>
+                    </select>
+                    <br>
             _____________________________
             <!-- user selects advising date using jquery widget -->
-            <br><p1>Neighborhood<br> <input type="text" name='date' id="datepicker" ></p1><br>
+            
             
             <br>
             _____________________________
