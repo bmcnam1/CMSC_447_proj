@@ -20,68 +20,69 @@
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <link rel="stylesheet" href="/resources/demos/style.css">
  
- 
- <?php
-ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
-define('DB_USER', 'root');
-define('DB_PASSWORD', 'cmsc447');
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'save_baltimore');
-  require ("query.php");
-	//query string - **only fetch the first 400 rows
-  $TABLE_NAME = "Baltimore_Crime_Data";
-	$sql = "SELECT * FROM $TABLE_NAME limit 400";
-	$results = query($sql);
-
-	//$data = array();
-	
-	$latitudes = array(); //use these arrays for Google heat map api
-	$longitudes = array(); 
-  $counter = 0;
-	while($row = mysqli_fetch_assoc($results)){ //loop through queryed items
-		//$data[] = $row;
-		$latitudes[$counter] = $row['latitude'];    //store latitudes 
-		$longitudes[$counter] = $row['longitude'];  //store longitues
-		$counter++;		
-	}
- ?>
- 
   <head>
   	<link href="Map.css" rel="stylesheet" type="text/css">
   </head>
-      <body>
-          <div id=map style="padding:0; margin:0;"> </div>
-          <div id="slider-range" style="height:20px; width:1000px; background:#000000"></div>
+		<body>
+          <div id=map>
+          </div>
+		  
       </body>
          
     <script>
+	  
 	  //JavaScript for the google heat map and JQuery slider bar	
 	  var map, heatmap;
-
+	  var pointArray;
+	 
+	  var json = <?php echo $json;?>;
+	  //alert("json.length = "+json.length);
       function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 13,
-          center: {lat: 39.2833, lng: -76.6167},  //batimore coordinates
-          mapTypeId: google.maps.MapTypeId.SATELLITE  //satelite view is default
-        });
+			
+			//alert("Calling initMap");
+			//alert("Trying to create the map");
+			pointArray =  new google.maps.MVCArray(getPoints());
+			map = new google.maps.Map(document.getElementById('map'), {
+			  zoom: 13,
+			  center: {lat: 39.2833, lng: -76.6167},  //batimore coordinates
+			  mapTypeId: google.maps.MapTypeId.SATELLITE  //satelite view is default
+			});
 
-        heatmap = new google.maps.visualization.HeatmapLayer({
-          data: getPoints(), //call getPoints() to get Lat,Longs
-          map: map			 //display on defined map
-        });
+			heatmap = new google.maps.visualization.HeatmapLayer({
+			  data: pointArray, //call getPoints() to get Lat,Longs
+			  map: map		    //display on defined map
+			});
       }
+	  
+	  function refreshMap(){
+		var json = <?php echo $json;?>;  
+		//alert("Calling refreshMap size = "+json.length);
+		
+		pointArray.clear();
+		
+		for(var i = 0; i < json.length; i++){
+			  var obj = json[i];
+			  pointArray.push(new google.maps.LatLng(obj.latitude, obj.longitude));
+			 
+		  }  
+		
+	  }
+	  
+	  
       function getPoints() {
 		  //return an array of Point objs 
-		  return [
-		  <?php
-		  	//only testing the first 400 rows of the DB
-  			for($i=0; $i<399; $i++){
-				echo("new google.maps.LatLng($latitudes[$i], $longitudes[$i]),");	
-			}
-			echo("new google.maps.LatLng($latitudes[399], $longitudes[399]),");
-		  ?>
-		];
+		  var points = [];
+		  for(var i = 0; i < json.length; i++){
+			  var obj = json[i];
+			  points.push(new google.maps.LatLng(obj.latitude, obj.longitude));
+			 
+		  }
+		  
+		  return points;
+	
+		
       }
+/*
 	  //create a slider bar with controlable range
 	  $(function() {
       	$( "#slider-range" ).slider({
@@ -96,12 +97,20 @@ define('DB_NAME', 'save_baltimore');
       	" - $" + $( "#slider-range" ).slider( "values", 1 ) );
   	});
 	//-----------------------------------------------------------------
-			
+			*/
 			
         </script>
         
     <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9E6isql4BUI_q7EhH3YEPTogzKxNl0ls&libraries=visualization&callback=initMap">
+	
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9E6isql4BUI_q7EhH3YEPTogzKxNl0ls&libraries=visualization&callback=initMap">
+
+        
     </script>
+    
+   
+    
       
 </html>
+
+ 
