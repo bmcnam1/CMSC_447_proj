@@ -3,9 +3,15 @@
 /*Map.css CSS Document */
 
 #map {
-    width: 1470px;
-    height: 740px;
+    width: 1500px;
+    height: 780px;
 	padding:0;
 	margin:0;
     
   }
+  
+  #slider-range{
+	/*overflow-x: hidden; 
+    overflow-y: auto;*/  
+  }
+
