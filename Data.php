@@ -1,6 +1,5 @@
 <?php 
-
-	
+	echo("In data.php");
 	error_reporting(E_ALL);
 	/*
 		this page will fetch all fields with the filters specified by
@@ -66,11 +65,14 @@
 		$counter++;	
 	}
 	
-	echo("Leaving Data.php  counter $counter");
+	
  	$json = json_encode($data);
 	
+	//echo $json;
 	include('Map.php');
 	include('PieChart.php');
+	
+	
 	
 	
 ?>
