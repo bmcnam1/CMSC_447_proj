@@ -7,9 +7,9 @@
 require("query.php");
 ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
 define('DB_USER', 'root');
-define('DB_PASSWORD', 'cmsc447');
+define('DB_PASSWORD', 'bmcnam1');
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'save_baltimore');
+define('DB_NAME', 'cmsc_447');
 function checks($field){
     
     $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
@@ -18,7 +18,6 @@ function checks($field){
         echo "<input type=\"checkbox\" value=\"" . $row[$field] . "\">" . $row[$field];
     }
 }
-
 function options($field){
     $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
     $results = query($sql);
@@ -64,7 +63,7 @@ function options($field){
         </div>
     </head>
     
- <body bgcolor="#4d4d4d" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+ <body onload="sendUserInput()" bgcolor="#4d4d4d" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
  <br><br><br><br><br>
  <table>
      <tr><td>
@@ -100,17 +99,17 @@ function options($field){
             _____________________________<br>
                      <p1>District</p1><br>
                      <!-- District -->
-                     <select name="neighborhood" id = "neighborhood" multiple size="5">
-                         <?php options("neighborhood");?>
+                     <select name="district" id = "district" onchange="sendUserInput();" multiple size="5">
+                         <?php options("district");?>
                     </select>
                      <br><br><br>
                      <p2>Nieghborhood</p2><br>
-                     <select name="neighborhood" id = "neighborhood" multiple size="5">
+                     <select name="neighborhood" id = "neighborhood" onchange="sendUserInput();" multiple size="5">
                          <?php options("neighborhood");?>
                     </select>
                        <br><br><br>
                          <p3 id="streetname">Street Name</p3><br>
-                         <select name="streetName" id = "streetName" multiple size="5">
+                         <select name="streetName" id = "streetName" onchange="sendUserInput();" multiple size="5">
                          <?php options("streetName");?>
                     </select><br>
             			______________________________
@@ -118,12 +117,12 @@ function options($field){
             <!-- user selects crime type  -->
             
                     <p3>Crime Type</p3><br>
-                    <select name="crimeType" id = "crimeType" multiple size="5">
+                    <select name="crimeType" id = "crimeType" onchange="sendUserInput();" multiple size="5">
                          <?php options("crimeType");?>
                     </select>
                        <br><br><br>
              	    <p3 id="groupNumber">Weapon </p3><br>
-                    <select name="weapon" id = "weapon" multiple size="5">
+                    <select name="weapon" id = "weapon" onchange="sendUserInput();" multiple size="5">
                          <?php options("weapon");?>
                     </select>
                     <br>
@@ -144,10 +143,46 @@ function options($field){
      </tr>
      
  </table>
- 
+ <p1 id="dummyElement" hidden> </p1>
  
  
  </body>
 
+<script >
+	/**
+	  *Ajax--SendUserInput()
+	  *Is called on html-element stateChange (see form elements above)
+	  *Sends data to Data.php
+	  *
+	  */
+    function sendUserInput(){
+		//alert("Got to send user input");
+		var district = document.getElementById("district");
+		var neighborhood = document.getElementById("neighborhood");
+		var streetname = document.getElementById("streetname");
+		
+		
+		district_val = district.value;//.options[district.selectedIndex].value;
+		neighborhood_val = neighborhood.value;//.options[neighborhood.selectedIndex].value;
+		streetname_val = streetname.value;//.options[streetname.selectedIndex].value;
+		
+		//alert("Test 2");
+		$("#dummyElement").load('Data.php', {
+			"district": district_val, 
+			"neighborhood": neighborhood_val,
+			"streetname": streetname_val
+		} );
+		//alert("test3 ");
+	
+	}
+	/*
+	 *Call-back function from ajax 
+	 *Excecute immidiatly after ajax completes
+	 */
+	$(document).ajaxComplete(function() {
+		//alert("complete");
+		document.getElementById('graphFrame').contentWindow.document.getElementById('piechart').click();
+	});
 
+</script>
 </html>
