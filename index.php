@@ -80,7 +80,7 @@ function options($field){
                 </div>
                 
                 <div id="table" style="background-color:SlateGray;">
-        			iframe goes here1
+        			<iframe name="outputFrame" src="Table.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
         		</div>
                 <div id="graph" style="background-color:SlateGray;">
         			<iframe name="outputFrame" id="graphFrame" src="PieChart.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
