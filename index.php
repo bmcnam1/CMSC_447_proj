@@ -18,7 +18,6 @@ function checks($field){
         echo "<input type=\"checkbox\" value=\"" . $row[$field] . "\">" . $row[$field];
     }
 }
-
 function options($field){
     $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
     $results = query($sql);
@@ -47,7 +46,7 @@ function options($field){
   </script>
   
   <!-- Header with title and company name-->
-	<head>
+	<head >
         <div class="header" id="headDiv" align="left">
         
             <table id="headerTable" align="right">
@@ -64,7 +63,7 @@ function options($field){
         </div>
     </head>
     
- <body bgcolor="#4d4d4d" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+ <body onload="sendUserInput()" bgcolor="#4d4d4d" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
  <br><br><br><br><br>
  <table>
      <tr><td>
@@ -76,7 +75,7 @@ function options($field){
                  <!--Change or add more tabs here-->
               </ul>
                
-                <div id="map" style="background-color:SlateGray;">
+                <div id="map" style="background-color:SlateGray;" >
                   <iframe name="outputFrame" src="Map.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
                 </div>
                 
@@ -84,7 +83,7 @@ function options($field){
         			iframe goes here1
         		</div>
                 <div id="graph" style="background-color:SlateGray;">
-        			<iframe name="outputFrame" src="PieChart.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
+        			<iframe name="outputFrame" id="graphFrame" src="PieChart.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
         		</div>
             </div>
          </td>
@@ -100,17 +99,17 @@ function options($field){
             _____________________________<br>
                      <p1>District</p1><br>
                      <!-- District -->
-                     <select name="neighborhood" id = "neighborhood" multiple size="5">
-                         <?php options("neighborhood");?>
+                     <select name="district" id = "district" onchange="sendUserInput();" multiple size="5">
+                         <?php options("district");?>
                     </select>
                      <br><br><br>
                      <p2>Nieghborhood</p2><br>
-                     <select name="neighborhood" id = "neighborhood" multiple size="5">
+                     <select name="neighborhood" id = "neighborhood" onchange="sendUserInput();" multiple size="5">
                          <?php options("neighborhood");?>
                     </select>
                        <br><br><br>
                          <p3 id="streetname">Street Name</p3><br>
-                         <select name="streetName" id = "streetName" multiple size="5">
+                         <select name="streetName" id = "streetname" onchange="sendUserInput();" multiple size="5">
                          <?php options("streetName");?>
                     </select><br>
             			______________________________
@@ -118,12 +117,12 @@ function options($field){
             <!-- user selects crime type  -->
             
                     <p3>Crime Type</p3><br>
-                    <select name="crimeType" id = "crimeType" multiple size="5">
+                    <select name="crimeType" id = "crimeType" onchange="sendUserInput();" multiple size="5">
                          <?php options("crimeType");?>
                     </select>
                        <br><br><br>
              	    <p3 id="groupNumber">Weapon </p3><br>
-                    <select name="weapon" id = "weapon" multiple size="5">
+                    <select name="weapon" id = "weapon" onchange="sendUserInput();" multiple size="5">
                          <?php options("weapon");?>
                     </select>
                     <br>
@@ -144,10 +143,56 @@ function options($field){
      </tr>
      
  </table>
- 
+ <p1 id="dummyElement" hidden> </p1>
  
  
  </body>
 
+<script >
+	/**
+	  *Ajax--SendUserInput()
+	  *Is called on html-element stateChange (see form elements above)
+	  *Sends data to Data.php
+	  *
+	  */
+	var isLoaded = false;
+    function sendUserInput(){
+		//alert("Got to send user input");
+		var district = document.getElementById("district");
+		var neighborhood = document.getElementById("neighborhood");
+		var streetname = document.getElementById("streetname");
+		
+		
+		district_val = district.value;
+		neighborhood_val = neighborhood.value;
+		streetname_val = streetname.value;
+		
+		//alert("Test 2");
+		$("#dummyElement").load('Data.php', {
+			"district": district_val, 
+			"neighborhood": neighborhood_val,
+			"streetname": streetname_val
+		} );
+		
+		//******
+		//append user input to inner.HTML of a hidden div element (located in PieChart.php)
+		document.getElementById('graphFrame').contentWindow.document.getElementById('dataDiv').innerHTML=district_val+","+neighborhood_val+","+streetname_val+",";
+		
+		//force an onClick event on the hidden 'div' to call redraw() chart
+		document.getElementById('graphFrame').contentWindow.document.getElementById('dataDiv').click();
+		//*******
+		
+		
+	
+	}
+	/*
+	 *Call-back function from ajax 
+	 *Excecute immidiatly after ajax completes
+	 */
+	$(document).ajaxComplete(function() {
+		//alert("complete");
+		//document.getElementById('graphFrame').contentWindow.document.getElementById('piechart').click();
+	});
 
+</script>
 </html>
