@@ -9,68 +9,76 @@
 	define('DB_PASSWORD', 'cmsc447');
 	define('DB_HOST', 'localhost');
 	define('DB_NAME', 'save_baltimore');
-	
+
 	$district="";
 	$neighborhood="";
 	$streetname="";
 	$crimetype="";
 	$weapon="";
-	
-	if(isset($_POST['neighborhood'])) {
-		$neighborhood = ($_POST["neighborhood"]);
-	}
-	if(isset($_POST['district'])) {
-		$district = ($_POST["district"]);
-	}
-	if(isset($_POST['streetname'])){
-		$streetname = ($_POST["streetname"]);
-	}
-	if(isset($_POST['crimetype'])) {
-		$crimetype = ($_POST["crimetype"]);
-	}
-	if(isset($_POST['weapon'])){
-		$streetname = ($_POST["weapon"]);
-	}
+
 	
 	$TABLE_NAME = "Baltimore_Crime_Data";
 	$sql = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
 	$query = "SELECT * FROM $TABLE_NAME WHERE 1";
 	
+	if(isset($_POST['neighborhood'])) {
+		$neighborhood = dataToSql($_POST['neighborhood'],'neighborhood');
+	}
+	if(isset($_POST['district'])) {
+		$district = dataToSql($_POST["district"],'district');
+	}
+	if(isset($_POST['streetname'])){
+		$streetname = dataToSql($_POST["streetname"],'streetName');
+	}
+	if(isset($_POST['crimetype'])) {
+		$crimetype = dataToSql($_POST["crimetype"],'crimeType');
+	}
+	if(isset($_POST['weapon'])){
+		$weapon = dataToSql($_POST["weapon"],'weapon');
+	}
+	if(isset($_POST['streetname'])){
+		$streetname = dataToSql($_POST["streetname"],'streetName');
+	}
+
+
 	if($district != ""){
-		$query .= " AND `district`='$district'";  
+		$query .= " AND `district`='$district";  
 	}
 	if($neighborhood != ""){
-		$query .= " AND `neighborhood`='$neighborhood'";  
+		$query .= " AND `neighborhood`='$neighborhood";  
 	}
 	if($streetname != ""){
-		$query .= " AND `streetName`='$streetname'";  
+		$query .= " AND `streetName`='$streetname";  
 	}
 	if($crimetype != ""){
-		$query .= " AND `crimeType`='$crimetype'";  
+		$query .= " AND `crimeType`='$crimetype";  
 	}
 	if($weapon != ""){
-		$query .= " AND `weapon`='$weapon'";  
+		$query .= " AND `weapon`='$weapon";  
 	}
 	$query .= " limit 1000";  //**optional** only query the first 1000 rows of table 
-	
 	$results = $sql->query($query);
 	$data = array();
-	$latitudes = array(); //use these arrays for Google heat map api
-	$longitudes = array();
-		
 	$counter = 0;
 	while($row = mysqli_fetch_assoc($results)){
 		$data[] = $row;
 		$counter++;	
 	}
 	
-	
  	$json = json_encode($data);
 	
 	
 	echo $json;
 	
-	include('Map.php');
-	//include('PieChart.php');
-
+	function dataToSql($params, $field){
+		if($params != ''){
+			$list = explode(',', $params);
+			$sql = $list[0] ."'";
+			for($i = 1; $i < count($list); $i++){
+				$sql .= "AND `$field` = '" . $list[$i] . "'";
+			}
+			return $sql;
+		}
+		return '';
+	}
 ?>

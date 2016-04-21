@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="examples.css" type="text/css"/>
 </head>
 <body>
+<p id="dataDiv" hidden></p>
 <table width="100%">
   <tr>
     <td valign="top" width="50%">
@@ -33,9 +34,14 @@
     success: function(data){
 
       table_data = data;
+      table();
     }
   });
-  ///Clean up the JSON string from Data.php
+ 
+
+
+  function table() {
+     ///Clean up the JSON string from Data.php
   table_data = table_data.replace("In data.php", "");
   table_data = table_data.substring(0, table_data.indexOf(']')+1);
   // create data json array
@@ -64,8 +70,6 @@
     forceFitColumns: true,
     multiColumnSort: true
   };
-
-  $(function () {
     grid = new Slick.Grid("#myGrid", JSONData, columns, options);
 
     // TODO get sorting working
@@ -86,7 +90,8 @@
       grid.invalidate();
       grid.render();
     });
-  })
+  }
+
 </script>
 </body>
 </html>

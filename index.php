@@ -10,14 +10,14 @@ define('DB_USER', 'root');
 define('DB_PASSWORD', 'cmsc447');
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'save_baltimore');
-function checks($field){
+// function checks($field){
     
-    $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
-    $results = query($sql);
-    while ($row = mysqli_fetch_assoc($results) ) {
-        echo "<input type=\"checkbox\" value=\"" . $row[$field] . "\">" . $row[$field];
-    }
-}
+//     $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
+//     $results = query($sql);
+//     while ($row = mysqli_fetch_assoc($results) ) {
+//         echo "<input type=\"checkbox\" value=\"" . $row[$field] . "\">" . $row[$field];
+//     }
+// }
 function options($field){
     $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
     $results = query($sql);
@@ -76,14 +76,14 @@ function options($field){
               </ul>
                
                 <div id="map" style="background-color:SlateGray;" >
-                  <iframe name="outputFrame" src="Map.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
+                  <iframe id="mapFr" name="outputFrame" src="Map.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
                 </div>
                 
                 <div id="table" style="background-color:SlateGray;">
-        			<iframe name="outputFrame" src="Table.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
+        			<iframe id="tableFr" name="outputFrame" src="Table.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
         		</div>
                 <div id="graph" style="background-color:SlateGray;">
-        			<iframe name="outputFrame" id="graphFrame" src="PieChart.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
+        			<iframe id="graphFr" name="outputFrame" id="graphFrame" src="PieChart.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
         		</div>
             </div>
          </td>
@@ -109,7 +109,7 @@ function options($field){
                     </select>
                        <br><br><br>
                          <p3 id="streetname">Street Name</p3><br>
-                         <select name="streetName" id = "streetname" onchange="sendUserInput();" multiple size="5">
+                         <select name="streetName" id = "streetName" onchange="sendUserInput();" multiple size="5">
                          <?php options("streetName");?>
                     </select><br>
             			______________________________
@@ -143,7 +143,7 @@ function options($field){
      </tr>
      
  </table>
- <p1 id="dummyElement" hidden> </p1>
+ <p1 id="dataStaging"> </p1>
  
  
  </body>
@@ -163,36 +163,48 @@ function options($field){
 		var streetname = document.getElementById("streetname");
 		
 		
-		district_val = district.value;
-		neighborhood_val = neighborhood.value;
-		streetname_val = streetname.value;
-		
-		//alert("Test 2");
-		$("#dummyElement").load('Data.php', {
-			"district": district_val, 
-			"neighborhood": neighborhood_val,
-			"streetname": streetname_val
-		} );
-		
-		//******
-		//append user input to inner.HTML of a hidden div element (located in PieChart.php)
-		document.getElementById('graphFrame').contentWindow.document.getElementById('dataDiv').innerHTML=district_val+","+neighborhood_val+","+streetname_val+",";
-		
-		//force an onClick event on the hidden 'div' to call redraw() chart
-		document.getElementById('graphFrame').contentWindow.document.getElementById('dataDiv').click();
-		//*******
-		
-		
-	
-	}
-	/*
-	 *Call-back function from ajax 
-	 *Excecute immidiatly after ajax completes
-	 */
-	$(document).ajaxComplete(function() {
-		//alert("complete");
-		//document.getElementById('graphFrame').contentWindow.document.getElementById('piechart').click();
-	});
+		districts = pullSelect('district');
+		neighborhoods = pullSelect('neighborhood');
+		streetnames = pullSelect('streetName');
+        crimeTypes = pullSelect('crimeType');
+        weapons = pullSelect('weapon');
 
+        $("#dataStaging").load("Data.php",{
+            "district": districts,
+            "neighborhood":neighborhoods,
+            "streetname":streetnames,
+            "crimetype":crimeTypes,
+            "weapon":weapons
+        }, UpdateAll);
+	}
+    function pullSelect(id){
+        var vals = '';
+        $("#" + id + " :selected").each(function(){
+            vals += $(this).val() + ',';
+        });
+        return vals.slice(0,-1);
+    }
+
+    function UpdateAll(){
+         var data = document.getElementById("dataStaging").textContent;
+         var ifrm = document.getElementById("graphFr");
+         // reference to document in iframe
+        var ifrm = ifrm.contentWindow || ifrm.contentDocument;
+        var chart;
+        if (ifrm.document) chart = ifrm.document;
+        chart.getElementById("dataDiv").textContent = data;
+        ifrm.window.update();
+        
+
+        var ifrm = document.getElementById("tableFr");
+         // reference to document in iframe
+        var ifrm = ifrm.contentWindow || ifrm.contentDocument;
+        ifrm.window.table_data = data;
+        ifrm.window.table();
+
+        var ifrm = document.getElementById("mapFr");
+         // reference to document in iframe
+        var ifrm = ifrm.contentWindow || ifrm.contentDocument;
+    }
 </script>
 </html>

@@ -5,7 +5,7 @@
     <script type="text/javascript">
 	  if(!canAccessGoogleVisualization()){
 		 google.charts.load('current', {'packages':['corechart']});
-		 google.charts.setOnLoadCallback(drawChart); 
+		 google.charts.setOnLoadCallback(init); 
 	  }
       
 	function canAccessGoogleVisualization() 
@@ -17,20 +17,22 @@
      return true;
    }
 }
-	//get initial data
-    function drawChart() {
-		var url = window.location.href;
-		var params = url.substring(url.indexOf("?"));
-		var jsonData = $.ajax({
-          url: "data.php",
-		  contentType: "application/json",
-         
-          async: false,
-		  success: function(data){
-            drawPieChart(data);
-            drawLineGraph(data);
-		  }
+	function init(){
+		$.ajax({
+			url: "data.php",
+			contentType: "application/json",
+	        async: false,
+			success: function(data){
+            	drawPieChart(data);
+            	drawLineGraph(data);
+		  	}
         });
+	}
+	//get initial data
+    function update() {
+		var jsonData = document.getElementById("dataDiv").innerHTML;
+		drawLineGraph(jsonData);
+		drawPieChart(jsonData);
 	}		
 
 	function drawLineGraph(graph_data){
@@ -109,70 +111,11 @@
 		//alert("drawing the chart");
     	chart.draw(data, options);
 
-    }
-	
-	//redraw the chart with updated data - triggered by onClick() event
-	function redraw(){
-	// 	//Get the inner.HTML of the hidden 'div' and split on ','
-	// 	var newData = document.getElementById('dataDiv').innerHTML.split(",");
-	// 	//
-	// 	for(i = 0; i < newData.length; i++){
-	// 		//try to clean up data if null
-	// 		if (typeof newData[i] == 'undefined'){
-	// 			//alert("It was undefined"+newData[i]);
-	// 			newData[i] = "";
-	// 		}
-	// 	}
-	// 	//TODO: newData[2] or 'streetname' is always undefined -use nothing for now.
-	// 	var jsonData = $.ajax({
- //          url: "Data.php",
- //          data: {district:newData[0], 
-	// 	         neighborhood:newData[1],
-	// 			 streetname:"" //newData[2]
-	// 			},
-	// 	  type: "POST",
- //          async: false
-		  
- //        }).responseText;
-	// 	//alert("new JsonData = "+jsonData);
-	// 	graph_data = jsonData;
-		
-	// 	graph_data = graph_data.substring(0, graph_data.indexOf(']')+1);
-		
-	
-	// 	 var JSONObject = JSON.parse(graph_data);
-	// 	 console.log(JSONObject);
-		 
-	// 	    var array = JSONObject;
-	// 		var counts = {};
-	// 		for(var i in array){
-	// 			var nam = array[i]['crimeType'];
-	// 			if(counts.hasOwnProperty(nam)){
-	// 				counts[nam] ++;
-	// 			}else{
-	// 				counts[nam] = 1;
-	// 			}
-	// 		}
-	// 		data = new google.visualization.DataTable();
-	// 		data.addColumn('string', 'Crime type');
- //        	data.addColumn('number', 'count');
- //        	for(var prop in counts){
- //        		data.addRow([prop,counts[prop]]);
- //        	}
-	// 		options = {'title':'Pie Chart of Baltimoere Crimes',
- //        					'width':800,
- //        					'height':700};
-        	
-	// 		//alert("drawing the chart");
- //        	chart.draw(data, options);
-		
-	}
-	  
-	  
+    }	  
     </script>
   </head>
   <body>
-	<div id="dataDiv" onclick='redraw();' hidden></div>
+	<div id="dataDiv" hidden></div>
     <div id="piechart" style="width: 900px; height: 500px;"></div>
     <div id="linechart" style="width: 900px; height: 500px;"></div>
   </body>
