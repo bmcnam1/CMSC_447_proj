@@ -42,19 +42,19 @@
 
 
 	if($district != ""){
-		$query .= " AND `district`='$district";  
+		$query .= " AND (`district`='$district)";  
 	}
 	if($neighborhood != ""){
-		$query .= " AND `neighborhood`='$neighborhood";  
+		$query .= " AND (`neighborhood`='$neighborhood)";  
 	}
 	if($streetname != ""){
-		$query .= " AND `streetName`='$streetname";  
+		$query .= " AND (`streetName`='$streetname)";  
 	}
 	if($crimetype != ""){
-		$query .= " AND `crimeType`='$crimetype";  
+		$query .= " AND (`crimeType`='$crimetype)";  
 	}
 	if($weapon != ""){
-		$query .= " AND `weapon`='$weapon";  
+		$query .= " AND (`weapon`='$weapon)";  
 	}
 	$query .= " limit 1000";  //**optional** only query the first 1000 rows of table 
 	$results = $sql->query($query);
@@ -75,7 +75,7 @@
 			$list = explode(',', $params);
 			$sql = $list[0] ."'";
 			for($i = 1; $i < count($list); $i++){
-				$sql .= "AND `$field` = '" . $list[$i] . "'";
+				$sql .= "OR `$field` = '" . $list[$i] . "'";
 			}
 			return $sql;
 		}
