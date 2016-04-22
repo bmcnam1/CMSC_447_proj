@@ -143,7 +143,7 @@ function options($field){
      </tr>
      
  </table>
- <p1 id="dataStaging"> </p1>
+ <p1 id="dataStaging" hidden> </p1>
  
  
  </body>
@@ -205,6 +205,11 @@ function options($field){
         var ifrm = document.getElementById("mapFr");
          // reference to document in iframe
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
+        var map;
+        if (ifrm.document) map = ifrm.document;
+        map.getElementById("dataDiv").textContent = data;
+        ifrm.window.update();
+
     }
 </script>
 </html>

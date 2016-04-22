@@ -19,7 +19,7 @@
 }
 	function init(){
 		$.ajax({
-			url: "data.php",
+			url: "Data.php",
 			contentType: "application/json",
 	        async: false,
 			success: function(data){

@@ -75,7 +75,7 @@
 			$list = explode(',', $params);
 			$sql = $list[0] ."'";
 			for($i = 1; $i < count($list); $i++){
-				$sql .= "OR `$field` = '" . $list[$i] . "'";
+				$sql .= "or `$field` = '" . $list[$i] . "'";
 			}
 			return $sql;
 		}

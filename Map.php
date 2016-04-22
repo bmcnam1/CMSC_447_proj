@@ -18,40 +18,13 @@
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-  <link rel="stylesheet" href="/resources/demos/style.css">
- 
- 
- <?php
-ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
-define('DB_USER', 'root');
-define('DB_PASSWORD', 'cmsc447');
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'save_baltimore');
-  require ("query.php");
-	//query string - **only fetch the first 400 rows
-  $TABLE_NAME = "Baltimore_Crime_Data";
-	$sql = "SELECT * FROM $TABLE_NAME limit 400";
-	$results = query($sql);
-
-	//$data = array();
-	
-	$latitudes = array(); //use these arrays for Google heat map api
-	$longitudes = array(); 
-  $counter = 0;
-	while($row = mysqli_fetch_assoc($results)){ //loop through queryed items
-		//$data[] = $row;
-		$latitudes[$counter] = $row['latitude'];    //store latitudes 
-		$longitudes[$counter] = $row['longitude'];  //store longitues
-		$counter++;		
-	}
- ?>
- 
   <head>
   	<link href="Map.css" rel="stylesheet" type="text/css">
   </head>
       <body>
           <div id=map style="padding:0; margin:0;"> </div>
           <div id="slider-range" style="height:20px; width:1000px; background:#000000"></div>
+          <p id="dataDiv" hidden></p>
       </body>
          
     <script>
@@ -59,28 +32,43 @@ define('DB_NAME', 'save_baltimore');
 	  var map, heatmap;
 
       function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 13,
-          center: {lat: 39.2833, lng: -76.6167},  //batimore coordinates
-          mapTypeId: google.maps.MapTypeId.SATELLITE  //satelite view is default
+        $.ajax({
+          url: "Data.php",
+          contentType: "application/json",
+          async: false,
+          success: function(data){
+            map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 13,
+              center: {lat: 39.2833, lng: -76.6167},  //batimore coordinates
+              mapTypeId: google.maps.MapTypeId.SATELLITE  //satelite view is default
+            });
+            var json = document.getElementById("dataDiv");
+            json.innerHTML = data;
+            
+            heatmap = new google.maps.visualization.HeatmapLayer({
+              data: getPoints(), //call getPoints() to get Lat,Longs
+              map: map   //display on defined map
+            });
+          }
         });
 
-        heatmap = new google.maps.visualization.HeatmapLayer({
-          data: getPoints(), //call getPoints() to get Lat,Longs
-          map: map			 //display on defined map
-        });
+      }
+
+      function update(){
+        heatmap.setData(getPoints());
+
       }
       function getPoints() {
-		  //return an array of Point objs 
-		  return [
-		  <?php
-		  	//only testing the first 400 rows of the DB
-  			for($i=0; $i<399; $i++){
-				echo("new google.maps.LatLng($latitudes[$i], $longitudes[$i]),");	
-			}
-			echo("new google.maps.LatLng($latitudes[399], $longitudes[399]),");
-		  ?>
-		];
+		  //return an array of Point objs                     new google.maps.LatLng($latitudes[$i], $longitudes[$i]),
+        var json = document.getElementById("dataDiv").innerHTML;
+        var data = JSON.parse(json);
+        var points = [];
+        for(var i in data){
+          var lat = data[i]['latitude'];
+          var lon = data[i]['longitude'];
+          points.push(new google.maps.LatLng(lat, lon));
+        }
+        return points;
       }
 	  //create a slider bar with controlable range
 	  $(function() {
