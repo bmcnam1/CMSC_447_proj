@@ -3,20 +3,37 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript">
+
+    	var month = new Array();
+		month[0] = "January";
+		month[1] = "February";
+		month[2] = "March";
+		month[3] = "April";
+		month[4] = "May";
+		month[5] = "June";
+		month[6] = "July";
+		month[7] = "August";
+		month[8] = "September";
+		month[9] = "October";
+		month[10] = "November";
+		month[11] = "December";
 	  if(!canAccessGoogleVisualization()){
 		 google.charts.load('current', {'packages':['corechart']});
 		 google.charts.setOnLoadCallback(init); 
 	  }
       
-	function canAccessGoogleVisualization() 
-{
-    if ((typeof google === 'undefined') || (typeof google.visualization === 'undefined')) {
-       return false;
-    }
-    else{
-     return true;
-   }
-}
+	function canAccessGoogleVisualization() {
+	    if ((typeof google === 'undefined') || (typeof google.visualization === 'undefined')) {
+	       return false;
+	    }
+	    else{
+	     return true;
+	   }
+	}
+
+	/*
+		init pull unfiltered data and put it on the charts 
+	*/
 	function init(){
 		$.ajax({
 			url: "Data.php",
@@ -28,41 +45,44 @@
 		  	}
         });
 	}
-	//get initial data
+
+	//update changes charts to go off of the filtered data
     function update() {
 		var jsonData = document.getElementById("dataDiv").innerHTML;
 		drawLineGraph(jsonData);
 		drawPieChart(jsonData);
 	}		
 
+	//drawLineGraph  calculates the number of each type during each month and puts a line per month
 	function drawLineGraph(graph_data){
-		graph_data = graph_data.replace("In data.php", "");
-		graph_data = graph_data.substring(0, graph_data.indexOf(']')+1);
 		var JsonArray = JSON.parse(graph_data);
 		var data = [];
 		var types = []
+
+		//collect all crime types
 		for(var i in JsonArray){
 			var type = JsonArray[i]['crimeType'];
 			if(types.indexOf(type) == -1){
 				types.push(type);
 			}
-
-			
 		}
-		//make sure each date has every type
+
+		//count the number of crimes of each type per month
 		for(var i in JsonArray){
 			var type = JsonArray[i]['crimeType'];
 			var dateStr = JsonArray[i]['crimeDateTime'];
-			var day = dateStr.substring(0,dateStr.indexOf(" "));
-			if(!data.hasOwnProperty(day)){
-				data[day] = [];
+			var date = new Date(dateStr);
+			var monthYear = month[date.getMonth()] + ' ' + dateStr.substring(0,4);
+			if(!data.hasOwnProperty(monthYear)){
+				data[monthYear] = [];
 				for(var typ in types){
-					data[day][types[typ]] = 0;
+					data[monthYear][types[typ]] = 0;
 				}
 			}
-			data[day][type]++;
+			data[monthYear][type]++;
 		}
 
+		//put the collected info into a google table
 		var table  = new google.visualization.DataTable();
 		table.addColumn('string','Day');
 		for(var i in types){
@@ -77,19 +97,20 @@
 			table.addRow(row);
 		}
 
+		//show graph
 		var options = {'title':'line Chart of Baltimoere Crimes',
     					'width':1000,
     					'height':900};
     	var chart = new google.visualization.LineChart(document.getElementById("linechart"));
     	chart.draw(table, options);
 	}
-	//for intital chart setup
+
+	// drawPieChart:  display a breakdown of crimes by type 
 	function drawPieChart(graph_data){
-		///Clean up the JSON string from Data.php
-		graph_data = graph_data.replace("In data.php", "");
-		graph_data = graph_data.substring(0, graph_data.indexOf(']')+1);
 		var JsonArray = JSON.parse(graph_data);
 		var counts = {};
+
+		//count the number of crimes per type
 		for(var i in JsonArray){
 			var nam = JsonArray[i]['crimeType'];
 			if(counts.hasOwnProperty(nam)){
@@ -98,12 +119,16 @@
 				counts[nam] = 1;
 			}
 		}
+
+		//translate data to google table
 		var data = new google.visualization.DataTable();
 		data.addColumn('string', 'Crime type');
     	data.addColumn('number', 'count');
     	for(var prop in counts){
     		data.addRow([prop,counts[prop]]);
     	}
+
+    	//display pie chart
     	var options = {'title':'Pie Chart of Baltimoere Crimes',
     					'width':800,
     					'height':700};

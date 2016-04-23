@@ -4,23 +4,20 @@
     this is being done with the Map.php file (see below)
 -->
 <?php 
-require("query.php");
 ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
 define('DB_USER', 'root');
 define('DB_PASSWORD', 'cmsc447');
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'save_baltimore');
-// function checks($field){
-    
-//     $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
-//     $results = query($sql);
-//     while ($row = mysqli_fetch_assoc($results) ) {
-//         echo "<input type=\"checkbox\" value=\"" . $row[$field] . "\">" . $row[$field];
-//     }
-// }
+
+/*
+    options echo all filter options into a select tag
+
+*/
 function options($field){
     $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
-    $results = query($sql);
+    $dbc = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
+    $results = $dbc->query($sql);
     while ($row = mysqli_fetch_assoc($results) ) {
         if($row[$field] == ""){
             $row[$field] = "None";
@@ -153,22 +150,20 @@ function options($field){
 	  *Ajax--SendUserInput()
 	  *Is called on html-element stateChange (see form elements above)
 	  *Sends data to Data.php
-	  *
+	  * then iserts filtered data into each iframe to update the views
 	  */
-	var isLoaded = false;
     function sendUserInput(){
-		//alert("Got to send user input");
+        //pulls out the selected filter options
 		var district = document.getElementById("district");
 		var neighborhood = document.getElementById("neighborhood");
 		var streetname = document.getElementById("streetname");
-		
-		
 		districts = pullSelect('district');
 		neighborhoods = pullSelect('neighborhood');
 		streetnames = pullSelect('streetName');
         crimeTypes = pullSelect('crimeType');
         weapons = pullSelect('weapon');
 
+        //sends data to backend to apply filters and put data into hidden div then, updates all frames
         $("#dataStaging").load("Data.php",{
             "district": districts,
             "neighborhood":neighborhoods,
@@ -177,6 +172,10 @@ function options($field){
             "weapon":weapons
         }, UpdateAll);
 	}
+
+    /*
+        pullSelect: get all selected values from given id and creates acomma seperated list
+    */
     function pullSelect(id){
         var vals = '';
         $("#" + id + " :selected").each(function(){
@@ -185,6 +184,8 @@ function options($field){
         return vals.slice(0,-1);
     }
 
+    //  UpdateAll:  takes the data from the staging div and passes it to all of the frames
+    //              call updater for each tab to change views to requested filters
     function UpdateAll(){
          var data = document.getElementById("dataStaging").textContent;
          var ifrm = document.getElementById("graphFr");
@@ -192,6 +193,7 @@ function options($field){
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
         var chart;
         if (ifrm.document) chart = ifrm.document;
+        //put data into frame and update view
         chart.getElementById("dataDiv").textContent = data;
         ifrm.window.update();
         
@@ -199,6 +201,7 @@ function options($field){
         var ifrm = document.getElementById("tableFr");
          // reference to document in iframe
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
+        //put data into frame and update view
         ifrm.window.table_data = data;
         ifrm.window.table();
 
@@ -207,6 +210,7 @@ function options($field){
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
         var map;
         if (ifrm.document) map = ifrm.document;
+        //put data into frame and update view
         map.getElementById("dataDiv").textContent = data;
         ifrm.window.update();
 
