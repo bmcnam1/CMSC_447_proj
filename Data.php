@@ -1,4 +1,4 @@
-<?php 
+ <?php 
 	error_reporting(E_ALL);
 	/*
 		this page will fetch all fields with the filters specified by
@@ -9,13 +9,14 @@
 	define('DB_PASSWORD', 'cmsc447');
 	define('DB_HOST', 'localhost');
 	define('DB_NAME', 'save_baltimore');
-
 	$district="";
 	$neighborhood="";
 	$streetname="";
 	$crimetype="";
 	$weapon="";
-
+	
+	$startTime="";
+	$endTime="";
 	
 	$TABLE_NAME = "Baltimore_Crime_Data";
 	$sql = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
@@ -39,8 +40,13 @@
 	if(isset($_POST['streetname'])){
 		$streetname = dataToSql($_POST["streetname"],'streetName');
 	}
-
-
+	if(isset($_POST['startTime'])){
+		$startTime = $_POST['startTime'];
+	}
+	if(isset($_POST['endTime'])){
+		$endTime = $_POST['endTime'];
+	}
+	
 	if($district != ""){
 		$query .= " AND (`district`='$district)";  
 	}
@@ -56,7 +62,10 @@
 	if($weapon != ""){
 		$query .= " AND (`weapon`='$weapon)";  
 	}
-	$query .= " limit 1000";  //**optional** only query the first 1000 rows of table 
+	if($startTime != ""){
+		$query .= " AND `crimeDateTime` >= '$startTime' AND `crimeDateTime` < '$endTime'";
+	}
+	$query .= " limit 3000";  //**optional** only query the first 1000 rows of table for speed
 	$results = $sql->query($query);
 	$data = array();
 	$counter = 0;

@@ -23,14 +23,13 @@
   </head>
       <body>
           <div id=map style="padding:0; margin:0;"> </div>
-          <div id="slider-range" style="height:20px; width:1000px; background:#000000"></div>
+          
           <p id="dataDiv" hidden></p>
       </body>
          
     <script>
 	  //JavaScript for the google heat map and JQuery slider bar	
 	  var map, heatmap;
-
       function initMap() {
         $.ajax({
           url: "Data.php",
@@ -51,15 +50,12 @@
             });
           }
         });
-
       }
-
       function update(){
         heatmap.setData(getPoints());
-
       }
       function getPoints() {
-		  //return an array of Point objs                     new google.maps.LatLng($latitudes[$i], $longitudes[$i]),
+		  //return an array of Point objs new google.maps.LatLng($latitudes[$i], $longitudes[$i]),
         var json = document.getElementById("dataDiv").innerHTML;
         var data = JSON.parse(json);
         var points = [];
@@ -71,20 +67,7 @@
         return points;
       }
 	  //create a slider bar with controlable range
-	  $(function() {
-      	$( "#slider-range" ).slider({
-      		orientation: "horizontal",
-      		range: true,
-     	    values: [ 17, 67 ],
-      		slide: function( event, ui ) {
-        		$( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-      		}
-    	});
-    	$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-      	" - $" + $( "#slider-range" ).slider( "values", 1 ) );
-  	});
-	//-----------------------------------------------------------------
-			
+	  
 			
         </script>
         

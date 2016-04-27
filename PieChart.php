@@ -3,7 +3,6 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript">
-
     	var month = new Array();
 		month[0] = "January";
 		month[1] = "February";
@@ -30,7 +29,6 @@
 	     return true;
 	   }
 	}
-
 	/*
 		init pull unfiltered data and put it on the charts 
 	*/
@@ -45,20 +43,17 @@
 		  	}
         });
 	}
-
 	//update changes charts to go off of the filtered data
     function update() {
 		var jsonData = document.getElementById("dataDiv").innerHTML;
 		drawLineGraph(jsonData);
 		drawPieChart(jsonData);
 	}		
-
 	//drawLineGraph  calculates the number of each type during each month and puts a line per month
 	function drawLineGraph(graph_data){
 		var JsonArray = JSON.parse(graph_data);
 		var data = [];
 		var types = []
-
 		//collect all crime types
 		for(var i in JsonArray){
 			var type = JsonArray[i]['crimeType'];
@@ -66,7 +61,6 @@
 				types.push(type);
 			}
 		}
-
 		//count the number of crimes of each type per month
 		for(var i in JsonArray){
 			var type = JsonArray[i]['crimeType'];
@@ -81,14 +75,12 @@
 			}
 			data[monthYear][type]++;
 		}
-
 		//put the collected info into a google table
 		var table  = new google.visualization.DataTable();
 		table.addColumn('string','Day');
 		for(var i in types){
 			table.addColumn('number', types[i]);
 		}
-
 		for(var date in data){
 			var row = [date];
 			for (var count in data[date]){
@@ -96,7 +88,6 @@
 			}
 			table.addRow(row);
 		}
-
 		//show graph
 		var options = {'title':'line Chart of Baltimoere Crimes',
     					'width':1000,
@@ -104,12 +95,10 @@
     	var chart = new google.visualization.LineChart(document.getElementById("linechart"));
     	chart.draw(table, options);
 	}
-
 	// drawPieChart:  display a breakdown of crimes by type 
 	function drawPieChart(graph_data){
 		var JsonArray = JSON.parse(graph_data);
 		var counts = {};
-
 		//count the number of crimes per type
 		for(var i in JsonArray){
 			var nam = JsonArray[i]['crimeType'];
@@ -119,7 +108,6 @@
 				counts[nam] = 1;
 			}
 		}
-
 		//translate data to google table
 		var data = new google.visualization.DataTable();
 		data.addColumn('string', 'Crime type');
@@ -127,7 +115,6 @@
     	for(var prop in counts){
     		data.addRow([prop,counts[prop]]);
     	}
-
     	//display pie chart
     	var options = {'title':'Pie Chart of Baltimoere Crimes',
     					'width':800,
@@ -135,7 +122,6 @@
     	var chart = new google.visualization.PieChart(document.getElementById('piechart'));
 		//alert("drawing the chart");
     	chart.draw(data, options);
-
     }	  
     </script>
   </head>

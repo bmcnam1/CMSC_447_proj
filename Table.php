@@ -4,7 +4,7 @@
   <title>SlickGrid example 1: Basic grid</title>
   <link rel="stylesheet" href="./lib/SlickGrid/slick.grid.css" type="text/css"/>
   <link rel="stylesheet" href="./lib/SlickGrid/css/smoothness/jquery-ui-1.8.16.custom.css" type="text/css"/>
-  <link rel="stylesheet" href="examples.css" type="text/css"/>
+  
 </head>
 <body>
 <p id="dataDiv" hidden></p>
@@ -29,17 +29,13 @@
   var jsonData = $.ajax({
     url: "Data.php",
 	contentType: "application/json",
-
     async: false,
     success: function(data){
-
       table_data = data;
       table();
     }
   });
  
-
-
   function table() {
      ///Clean up the JSON string from Data.php
   table_data = table_data.replace("In data.php", "");
@@ -50,7 +46,6 @@
     // testing for data rows
     //var name = JSONData[i]['crimeType'];
   }
-
   var grid;
   var columns = [
     {id: "id", name: "id", field: "id"},
@@ -63,7 +58,6 @@
     {id: "latitude", name: "latitude", field: "latitude"},
     {id: "longitude", name: "longitude", field: "longitude"},
   ];
-
   var options = {
     enableCellNavigation: true,
     enableColumnReorder: false,
@@ -71,7 +65,6 @@
     multiColumnSort: true
   };
     grid = new Slick.Grid("#myGrid", JSONData, columns, options);
-
     // TODO get sorting working
     grid.onSort.subscribe(function (e, args) {
       var cols = args.sortCols;
@@ -91,7 +84,6 @@
       grid.render();
     });
   }
-
 </script>
 </body>
 </html>

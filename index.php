@@ -1,23 +1,21 @@
-<!-- index.php:
+<!-- <!-- index.php:
 	This file a titleBar, Filter Panel, and Tab Panel
     Eachtab is an html iframe to another webpage: current example of 
     this is being done with the Map.php file (see below)
 -->
 <?php 
 ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
-define('DB_USER', 'root');
-define('DB_PASSWORD', 'cmsc447');
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'save_baltimore');
-
+  define('DB_USER', 'root');
+  define('DB_PASSWORD', 'cmsc447');
+  define('DB_HOST', 'localhost');
+  define('DB_NAME', 'save_baltimore');
 /*
     options echo all filter options into a select tag
-
 */
 function options($field){
-    $sql = "SELECT DISTINCT `$field` FROM `baltimore_crime_data`";
+    $sql = "SELECT DISTINCT `$field` FROM `Baltimore_Crime_Data`";
     $dbc = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
-    $results = $dbc->query($sql);
+     $results = $dbc->query($sql);
     while ($row = mysqli_fetch_assoc($results) ) {
         if($row[$field] == ""){
             $row[$field] = "None";
@@ -31,9 +29,10 @@ function options($field){
       
     <title>Indigo</title>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-  <script type="text/javascript" src="filters.js"></script>
+ 
   
   <!-- create tabPanel -->
   <script>
@@ -92,11 +91,11 @@ function options($field){
 
             <!-- user selects filter -->
             <font color="#FFFFFF">
-                <h1> Filter </h1><br><br>
+                <h1> Filter </h1>
             _____________________________<br>
                      <p1>District</p1><br>
                      <!-- District -->
-                     <select name="district" id = "district" onchange="sendUserInput();" multiple size="5">
+                     <select name="district" id = "district" onchange="sendUserInput();" multiple>
                          <?php options("district");?>
                     </select>
                      <br><br><br>
@@ -122,17 +121,7 @@ function options($field){
                     <select name="weapon" id = "weapon" onchange="sendUserInput();" multiple size="5">
                          <?php options("weapon");?>
                     </select>
-                    <br>
-            _____________________________
-            <!-- user selects advising date using jquery widget -->
-            
-            
-            <br>
-            _____________________________
-            <br>
-            <!-- user selects time in drop down box -->
-                
-            <br><br><br><br><br>
+                <br><br><br><br><br>
             </font>
             </form>
     		</div>
@@ -140,12 +129,17 @@ function options($field){
      </tr>
      
  </table>
- <p1 id="dataStaging" hidden> </p1>
+ <input onChange="sendUserInput()" style="width:100px; text-align:center" type="text" id="startDate">-
+ <input onChange="sendUserInput()" style="width:100px; text-align:center" type="text" id="endDate">
+ <div id="slider"></div>	
  
+ <p1 id="dataStaging" hidden> </p1>
+ <p1 id="timeStaging" hidden> </p1>
  
  </body>
 
-<script >
+<script>
+
 	/**
 	  *Ajax--SendUserInput()
 	  *Is called on html-element stateChange (see form elements above)
@@ -154,25 +148,29 @@ function options($field){
 	  */
     function sendUserInput(){
         //pulls out the selected filter options
-		var district = document.getElementById("district");
-		var neighborhood = document.getElementById("neighborhood");
-		var streetname = document.getElementById("streetname");
-		districts = pullSelect('district');
-		neighborhoods = pullSelect('neighborhood');
-		streetnames = pullSelect('streetName');
+    		var district = document.getElementById("district");
+    		var neighborhood = document.getElementById("neighborhood");
+    		var streetname = document.getElementById("streetname");
+    		var startTime = document.getElementById("startDate").value;
+    		var endTime = document.getElementById("endDate").value;
+    		
+    		districts = pullSelect('district');
+    		neighborhoods = pullSelect('neighborhood');
+    		streetnames = pullSelect('streetName');
         crimeTypes = pullSelect('crimeType');
         weapons = pullSelect('weapon');
-
+		
         //sends data to backend to apply filters and put data into hidden div then, updates all frames
         $("#dataStaging").load("Data.php",{
             "district": districts,
             "neighborhood":neighborhoods,
             "streetname":streetnames,
             "crimetype":crimeTypes,
-            "weapon":weapons
+            "weapon":weapons,
+      			"startTime": startTime,
+      			"endTime": endTime
         }, UpdateAll);
 	}
-
     /*
         pullSelect: get all selected values from given id and creates acomma seperated list
     */
@@ -183,12 +181,11 @@ function options($field){
         });
         return vals.slice(0,-1);
     }
-
     //  UpdateAll:  takes the data from the staging div and passes it to all of the frames
     //              call updater for each tab to change views to requested filters
     function UpdateAll(){
-         var data = document.getElementById("dataStaging").textContent;
-         var ifrm = document.getElementById("graphFr");
+        var data = document.getElementById("dataStaging").textContent;
+        var ifrm = document.getElementById("graphFr");
          // reference to document in iframe
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
         var chart;
@@ -197,14 +194,12 @@ function options($field){
         chart.getElementById("dataDiv").textContent = data;
         ifrm.window.update();
         
-
         var ifrm = document.getElementById("tableFr");
          // reference to document in iframe
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
         //put data into frame and update view
         ifrm.window.table_data = data;
         ifrm.window.table();
-
         var ifrm = document.getElementById("mapFr");
          // reference to document in iframe
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
@@ -213,7 +208,152 @@ function options($field){
         //put data into frame and update view
         map.getElementById("dataDiv").textContent = data;
         ifrm.window.update();
-
     }
 </script>
-</html>
+
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
+<script>
+var chart = AmCharts.makeChart("slider", {
+    "type": "serial",
+    "theme": "dark",
+    "marginRight": 40,
+    "marginLeft": 40,
+    "autoMarginOffset": 20,
+    "mouseWheelZoomEnabled":true,
+    "dataDateFormat": "YYYY-MM-DD",
+    "valueAxes": [{
+        "id": "v1",
+        "axisAlpha": 0,
+        "position": "left",
+        "ignoreAxisWidth":true
+    }],
+    "balloon": {
+        "borderThickness": 1,
+        "shadowAlpha": 0
+    },
+    "graphs": [{
+        "id": "g1",
+        "balloon":{
+          "drop":true,
+          "adjustBorderColor":false,
+          "color":"#ffffff"
+        },
+        "bullet": "round",
+        "bulletBorderAlpha": 1,
+        "bulletColor": "#FFFFFF",
+        "bulletSize": 5,
+        "hideBulletsCount": 50,
+        "lineThickness": 2,
+        "title": "red line",
+        "useLineColorForBulletBorder": true,
+        "valueField": "value",
+        "balloonText": "<span style='font-size:18px;'>[[value]]</span>"
+    }],
+    "chartScrollbar": {
+        "graph": "g1",
+        "oppositeAxis":false,
+        "offset":30,
+        "scrollbarHeight": 80,
+        "backgroundAlpha": 0,
+        "selectedBackgroundAlpha": 0.1,
+        "selectedBackgroundColor": "#888888",
+        "graphFillAlpha": 0,
+        "graphLineAlpha": 0.5,
+        "selectedGraphFillAlpha": 0,
+        "selectedGraphLineAlpha": 1,
+        "autoGridCount":true,
+        "color":"#AAAAAA"
+    },
+    "chartCursor": {
+        "pan": true,
+        "valueLineEnabled": true,
+        "valueLineBalloonEnabled": true,
+        "cursorAlpha":1,
+        "cursorColor":"#258cbb",
+        "limitToGraph":"g1",
+        "valueLineAlpha":0.2
+    },
+    "valueScrollbar":{
+      "oppositeAxis":false,
+      "offset":50,
+      "scrollbarHeight":10
+    },
+    "categoryField": "date",
+    "categoryAxis": {
+        "parseDates": true,
+        "dashLength": 1,
+        "minorGridEnabled": true
+    },
+    "export": {
+        "enabled": true
+    },
+    "dataProvider": getTimeData()
+ 
+});
+
+chart.addListener("rendered", zoomChart);
+chart.addListener("zoomed", handleZoom);
+zoomChart();
+
+function getTimeData(){
+	$.ajax({
+          url: "Data.php",
+          contentType: "application/json",
+          async: false,
+		  success: function(data){
+            
+			var json = document.getElementById("timeStaging");
+			json.innerHTML = data;
+		  }
+    });
+	var json = document.getElementById("timeStaging").innerHTML;
+	var data = JSON.parse(json);
+	
+	var prevDateTime = data[0]['crimeDateTime'].toString();
+	var prevDate = prevDateTime.substring(0, 10);
+		
+	var dateTime = data[0]['crimeDateTime'].toString();
+    var date = dateTime.substring(0, 10);
+	var count = 0;
+	var points =[];
+	
+	for(var i in data){
+          dateTime = data[i]['crimeDateTime'].toString();
+		  date = dateTime.substring(0, 10);
+		  
+		  if(date == prevDate){
+			count++; 
+			
+		  }else{
+			
+			points.push({
+				"date": prevDate,
+				"value": count
+			});
+			
+			prevDate = data[i]['crimeDateTime'].toString(); 
+			prevDate = prevDate.substring(0, 10);
+			count = 0;
+		  }   
+    }
+	return points.reverse(); 
+}
+
+function zoomChart() {
+    chart.zoomToIndexes(chart.dataProvider.length - 40, chart.dataProvider.length - 1);
+}
+
+function handleZoom(event) {
+  var startDate = event.startDate;
+  var endDate = event.endDate;
+  
+  document.getElementById("startDate").value = AmCharts.formatDate(startDate, "YYYY-MM-DD");
+  document.getElementById("endDate").value = AmCharts.formatDate(endDate, "YYYY-MM-DD");
+  document.getElementById("startDate").onchange()
+ 
+}
+
+</script>
+</html> -->
