@@ -15,12 +15,13 @@ ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for defau
 function options($field){
     $sql = "SELECT DISTINCT `$field` FROM `Baltimore_Crime_Data`";
     $dbc = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
-     $results = $dbc->query($sql);
+    $results = $dbc->query($sql);
     while ($row = mysqli_fetch_assoc($results) ) {
+        $val = $row[$field];
         if($row[$field] == ""){
-            $row[$field] = "None";
+            $val = "None";
         }
-        echo "<option value=\"" . $row[$field] . "\">". $row[$field] . "</option>";
+        echo "<li><input onChange=\"sendUserInput()\" type=\"checkbox\" name =\"" . $field. "\" value=\"" . $row[$field] . "\">". $val . "</li>";
     }
 }
 ?>
@@ -49,19 +50,108 @@ function options($field){
                 <tr >
                     <td>
                         <font color="#FFFFFF" size="+5" >Save Baltimore</font>
-                    </td><td></td>
-                    <td>
-                        <font color="#8364EC" size="+4">Indigo</font>
-                        <font color="#8364EC" size="+2"> Inc.</font>	
                     </td>
-                </tr>
+                    <td>
+                      <dl class="dropdown"> 
+  
+                      <dt>
+                      <a href="#" class="districtList">
+                        <span class="hida">District</span>    
+                        <p class="multiSel"></p>  
+                      </a>
+                      </dt>
+                    
+                      <dd>
+                          <div class="mutliSelect">
+                              <ul id="districtList">
+                                <?php options("district"); ?>  
+
+                              </ul>
+                          </div>
+                      </dd>
+                 </td>
+                 <td>
+                      <dl class="dropdown"> 
+  
+                      <dt>
+                      <a href="#" class="nerghborhoodList">
+                        <span class="hida">Neighborhood</span>    
+                        <p class="multiSel"></p>  
+                      </a>
+                      </dt>
+                    
+                      <dd>
+                          <div class="mutliSelect">
+                              <ul id="nerghborhoodList">
+                                <?php options("neighborhood"); ?>  
+
+                              </ul>
+                          </div>
+                      </dd>
+                 </td><td>
+                      <dl class="dropdown"> 
+  
+                      <dt>
+                      <a href="#" class="streetNameLList">
+                        <span class="hida">Street Name</span>    
+                        <p class="multiSel"></p>  
+                      </a>
+                      </dt>
+                    
+                      <dd>
+                          <div class="mutliSelect">
+                              <ul id="streetNameLList">
+                                <?php options("streetName"); ?>  
+
+                              </ul>
+                          </div>
+                      </dd>
+                 </td>
+                 <td>
+                      <dl class="dropdown"> 
+  
+                      <dt>
+                      <a href="#" class="crimeList">
+                        <span class="hida">Crime Type</span>    
+                        <p class="multiSel"></p>  
+                      </a>
+                      </dt>
+                    
+                      <dd>
+                          <div class="mutliSelect">
+                              <ul id="crimeList">
+                                <?php options("crimeType"); ?>  
+
+                              </ul>
+                          </div>
+                      </dd>
+                 </td>
+                 <td>
+                      <dl class="dropdown"> 
+  
+                      <dt>
+                      <a href="#" class="weaponList">
+                        <span class="hida">weapon</span>    
+                        <p class="multiSel"></p>  
+                      </a>
+                      </dt>
+                    
+                      <dd>
+                          <div class="mutliSelect">
+                              <ul id="weaponList">
+                                <?php options("weapon"); ?>  
+
+                              </ul>
+                          </div>
+                      </dd>
+                 </td>
             </table>
         </div>
     </head>
     
  <body onload="sendUserInput()" bgcolor="#4d4d4d" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
  <br><br><br><br><br>
- <table>
+ <table id ="frames">
      <tr><td>
          <div id="tabs">
             <ul>
@@ -72,60 +162,18 @@ function options($field){
               </ul>
                
                 <div id="map" style="background-color:SlateGray;" >
-                  <iframe id="mapFr" name="outputFrame" src="Map.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
+                  <iframe id="mapFr" name="outputFrame" src="Map.php"  frameborder="0" width="1950" height="750" align="center"></iframe>
                 </div>
                 
                 <div id="table" style="background-color:SlateGray;">
-        			<iframe id="tableFr" name="outputFrame" src="Table.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
+        			<iframe id="tableFr" name="outputFrame" src="Table.php"  frameborder="0" width="1950" height="750" align="center"></iframe>
         		</div>
                 <div id="graph" style="background-color:SlateGray;">
-        			<iframe id="graphFr" name="outputFrame" id="graphFrame" src="PieChart.php"  frameborder="0" width="1450" height="750" align="center"></iframe>
+        			<iframe id="graphFr" name="outputFrame" id="graphFrame" src="Graphs.php"  frameborder="0" width="1950" height="750" align="center"></iframe>
         		</div>
             </div>
          </td>
          
-         <!--Filter Panel goes here-->
-         <td>
-           <div id="filterDiv" style="background-color:SlateGray; text-align:center; padding:15px; align="center"">
-           <form action="" method="POST">
-
-            <!-- user selects filter -->
-            <font color="#FFFFFF">
-                <h1> Filter </h1>
-            _____________________________<br>
-                     <p1>District</p1><br>
-                     <!-- District -->
-                     <select name="district" id = "district" onchange="sendUserInput();" multiple>
-                         <?php options("district");?>
-                    </select>
-                     <br><br><br>
-                     <p2>Nieghborhood</p2><br>
-                     <select name="neighborhood" id = "neighborhood" onchange="sendUserInput();" multiple size="5">
-                         <?php options("neighborhood");?>
-                    </select>
-                       <br><br><br>
-                         <p3 id="streetname">Street Name</p3><br>
-                         <select name="streetName" id = "streetName" onchange="sendUserInput();" multiple size="5">
-                         <?php options("streetName");?>
-                    </select><br>
-            			______________________________
-            		   <br><br><br>                      
-            <!-- user selects crime type  -->
-            
-                    <p3>Crime Type</p3><br>
-                    <select name="crimeType" id = "crimeType" onchange="sendUserInput();" multiple size="5">
-                         <?php options("crimeType");?>
-                    </select>
-                       <br><br><br>
-             	    <p3 id="groupNumber">Weapon </p3><br>
-                    <select name="weapon" id = "weapon" onchange="sendUserInput();" multiple size="5">
-                         <?php options("weapon");?>
-                    </select>
-                <br><br><br><br><br>
-            </font>
-            </form>
-    		</div>
-         </td>
      </tr>
      
  </table>
@@ -148,18 +196,19 @@ function options($field){
 	  */
     function sendUserInput(){
         //pulls out the selected filter options
-    		var district = document.getElementById("district");
-    		var neighborhood = document.getElementById("neighborhood");
-    		var streetname = document.getElementById("streetname");
-    		var startTime = document.getElementById("startDate").value;
-    		var endTime = document.getElementById("endDate").value;
+    		var district = document.getElementsByName("district");
+    		var neighborhood = document.getElementsByName("neighborhood");
+    		var streetName = document.getElementsByName("streetName");
+        var crimeType = document.getElementsByName("crimeType");
+        var weapon = document.getElementsByName("weapon");
+    		var startTime = document.getElementsByName("startDate").value;
+    		var endTime = document.getElementsByName("endDate").value;
     		
-    		districts = pullSelect('district');
-    		neighborhoods = pullSelect('neighborhood');
-    		streetnames = pullSelect('streetName');
-        crimeTypes = pullSelect('crimeType');
-        weapons = pullSelect('weapon');
-		
+    		districts = pullSelect(district);
+    		neighborhoods = pullSelect(neighborhood);
+    		streetnames = pullSelect(streetName);
+        crimeTypes = pullSelect(crimeType);
+        weapons = pullSelect(weapon);
         //sends data to backend to apply filters and put data into hidden div then, updates all frames
         $("#dataStaging").load("Data.php",{
             "district": districts,
@@ -174,11 +223,12 @@ function options($field){
     /*
         pullSelect: get all selected values from given id and creates acomma seperated list
     */
-    function pullSelect(id){
+    function pullSelect(set){
         var vals = '';
-        $("#" + id + " :selected").each(function(){
-            vals += $(this).val() + ',';
-        });
+        for(var i =0; i < set.length; i++){
+            if(set[i].checked)
+              vals += set[i].value + ',';
+          }
         return vals.slice(0,-1);
     }
     //  UpdateAll:  takes the data from the staging div and passes it to all of the frames
@@ -355,5 +405,43 @@ function handleZoom(event) {
  
 }
 
+</script>
+
+<script type="text/javascript">
+  
+$(".dropdown dt a").on('click', function() {
+  var cl = $(this).attr('class');
+  $("#" + cl).slideToggle('fast');
+});
+
+$(".dropdown dd ul li a").on('click', function() {
+  $(".dropdown dd ul").hide();
+});
+
+function getSelectedValue(id) {
+  return $("#" + id).find("dt a span.value").html();
+}
+
+$(document).bind('click', function(e) {
+  var $clicked = $(e.target);
+  if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
+});
+
+// $('.mutliSelect input[type="checkbox"]').on('click', function() {
+
+//   var title = $(this).closest('.mutliSelect').find('input[type="checkbox"]').val(),
+//     title = $(this).val() + ",";
+
+//   if ($(this).is(':checked')) {
+//     var html = '<span title="' + title + '">' + title + '</span>';
+//     $('.multiSel').append(html);
+//     $(".hida").hide();
+//   } else {
+//     $('span[title="' + title + '"]').remove();
+//     var ret = $(".hida");
+//     $('.dropdown dt a').append(ret);
+
+//   }
+// });
 </script>
 </html> -->

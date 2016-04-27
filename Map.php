@@ -22,7 +22,7 @@
   	<link href="Map.css" rel="stylesheet" type="text/css">
   </head>
       <body>
-          <div id=map style="padding:0; margin:0;"> </div>
+          <div id=map style="padding:0; margin:0; width: 1910px; height: 720px;"> </div>
           
           <p id="dataDiv" hidden></p>
       </body>

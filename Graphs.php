@@ -1,8 +1,16 @@
 <html>
   <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script>
+  $(function() {
+    $( "#tabs" ).tabs();
+  });
+  </script>
     <script type="text/javascript">
+
     	var month = new Array();
 		month[0] = "January";
 		month[1] = "February";
@@ -126,8 +134,17 @@
     </script>
   </head>
   <body>
+
+  	<div id="tabs">
+	  	<ul>
+			<ii><a href="#piechart">Crime Type Pie Chart</a></ii>
+			<ii><a href="#linechart">Crime Type line graph</a></ii>
+		</ul>	
+		<div id="piechart" style="width: 900px; height: 500px;"></div>
+    	<div id="linechart" style="width: 900px; height: 500px;"></div>
+  	
+  	</div>
 	<div id="dataDiv" hidden></div>
-    <div id="piechart" style="width: 900px; height: 500px;"></div>
-    <div id="linechart" style="width: 900px; height: 500px;"></div>
+    
   </body>
 </html>
