@@ -35,6 +35,17 @@
       table();
     }
   });
+
+  function sorterNumeric(a, b) {
+    var x = (isNaN(a[sortcol]) || a[sortcol] === "" || a[sortcol] === null) ? -99e+10 : parseFloat(a[sortcol]);
+    var y = (isNaN(b[sortcol]) || b[sortcol] === "" || b[sortcol] === null) ? -99e+10 : parseFloat(b[sortcol]);
+    return sortdir * (x === y ? 0 : (x > y ? 1 : -1));
+  }
+
+  function sorterStringCompare(a, b) {
+    var x = a[sortcol], y = b[sortcol];
+    return sortdir * (x === y ? 0 : (x > y ? 1 : -1));
+  }
  
   function table() {
      ///Clean up the JSON string from Data.php
@@ -48,15 +59,15 @@
   }
   var grid;
   var columns = [
-    {id: "id", name: "id", field: "id"},
-    {id: "crimeDateTime", name: "crimeDateTime", field: "crimeDateTime"},
-    {id: "streetName", name: "streetName", field: "streetName"},
-    {id: "crimeType", name: "crimeType", field: "crimeType"},
-    {id: "weapon", name: "weapon", field: "weapon"},
-    {id: "district", name: "district", field: "district"},
-    {id: "neighborhood", name: "neighborhood", field: "neighborhood"},
-    {id: "latitude", name: "latitude", field: "latitude"},
-    {id: "longitude", name: "longitude", field: "longitude"},
+    {id: "id", name: "ID", field: "id", width: 25, minWidth: 20, sortable: true, sorter: sorterNumeric},
+    {id: "crimeDateTime", name: "Date & Time", field: "crimeDateTime", width: 60, sortable: true, sorter: sorterStringCompare},
+    {id: "streetName", name: "Street Name", field: "streetName", sortable: true, sorter: sorterStringCompare},
+    {id: "crimeType", name: "Crime Type", field: "crimeType", sortable: true, sorter: sorterStringCompare},
+    {id: "weapon", name: "Weapon", field: "weapon", width: 30, sortable: true, sorter: sorterStringCompare},
+    {id: "district", name: "District", field: "district", width: 50, sortable: true, sorter: sorterStringCompare},
+    {id: "neighborhood", name: "Neighborhood", field: "neighborhood", sortable: true, sorter: sorterStringCompare},
+    {id: "latitude", name: "Latitude", field: "latitude", width: 50, sortable: true, sorter: sorterNumeric},
+    {id: "longitude", name: "Longitude", field: "longitude", width: 50, sortable: true, sorter: sorterNumeric},
   ];
   var options = {
     enableCellNavigation: true,
@@ -65,23 +76,23 @@
     multiColumnSort: true
   };
     grid = new Slick.Grid("#myGrid", JSONData, columns, options);
-    // TODO get sorting working
     grid.onSort.subscribe(function (e, args) {
       var cols = args.sortCols;
+
       JSONData.sort(function (dataRow1, dataRow2) {
-        for (var i = 0, l = cols.length; i < l; i++) {
-          var field = cols[i].sortCol.field;
-          var sign = cols[i].sortAsc ? 1 : -1;
-          var value1 = dataRow1[field], value2 = dataRow2[field];
-          var result = (value1 == value2 ? 0 : (value1 > value2 ? 1 : -1)) * sign;
+      for (var i = 0, l = cols.length; i < l; i++) {
+          sortdir = cols[i].sortAsc ? 1 : -1;
+          sortcol = cols[i].sortCol.field;
+
+          var result = cols[i].sortCol.sorter(dataRow1, dataRow2); // sorter property from column definition comes in play here
           if (result != 0) {
             return result;
           }
         }
         return 0;
       });
-      grid.invalidate();
-      grid.render();
+      args.grid.invalidateAllRows();
+      args.grid.render();
     });
   }
 </script>
