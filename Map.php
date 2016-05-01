@@ -46,7 +46,8 @@
             
             heatmap = new google.maps.visualization.HeatmapLayer({
               data: getPoints(), //call getPoints() to get Lat,Longs
-              map: map   //display on defined map
+              map: map,   //display on defined map
+              radius: 30
             });
           }
         });
