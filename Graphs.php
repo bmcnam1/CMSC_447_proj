@@ -1,9 +1,8 @@
 <html>
   <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script>
   $(function() {
     $( "#tabs" ).tabs();
@@ -137,8 +136,8 @@
 
   	<div id="tabs">
 	  	<ul>
-			<ii><a href="#piechart">Crime Type Pie Chart</a></ii>
-			<ii><a href="#linechart">Crime Type line graph</a></ii>
+			<li><a href="#piechart">Crime Type Pie Chart</a></li>
+			<li><a href="#linechart">Crime Type line graph</a></li>
 		</ul>	
 		<div id="piechart" style="width: 900px; height: 500px;"></div>
     	<div id="linechart" style="width: 900px; height: 500px;"></div>

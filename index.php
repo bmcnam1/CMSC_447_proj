@@ -1,4 +1,4 @@
-<!-- <!-- index.php:
+<!-- index.php:
 	This file a titleBar, Filter Panel, and Tab Panel
     Eachtab is an html iframe to another webpage: current example of 
     this is being done with the Map.php file (see below)
@@ -444,4 +444,4 @@ $(document).bind('click', function(e) {
 //   }
 // });
 </script>
-</html> -->
+</html>
