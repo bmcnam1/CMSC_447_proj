@@ -29,10 +29,10 @@ function options($field){
     <link href="generalDesign.css" rel="stylesheet" type="text/css">
       
     <title>Indigo</title>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   
-  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
  
   
   <!-- create tabPanel -->
@@ -44,7 +44,7 @@ function options($field){
   
   <!-- Header with title and company name-->
 	<head >
-        <div class="header" id="headDiv" align="left">
+2        <div class="header" id="headDiv" align="left">
         
             <table id="headerTable" align="right">
                 <tr >
@@ -427,21 +427,21 @@ $(document).bind('click', function(e) {
   if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
 });
 
-// $('.mutliSelect input[type="checkbox"]').on('click', function() {
+$('.mutliSelect input[type="checkbox"]').on('click', function() {
 
-//   var title = $(this).closest('.mutliSelect').find('input[type="checkbox"]').val(),
-//     title = $(this).val() + ",";
+  var title = $(this).closest('.mutliSelect').find('input[type="checkbox"]').val(),
+    title = $(this).val() + ",";
 
-//   if ($(this).is(':checked')) {
-//     var html = '<span title="' + title + '">' + title + '</span>';
-//     $('.multiSel').append(html);
-//     $(".hida").hide();
-//   } else {
-//     $('span[title="' + title + '"]').remove();
-//     var ret = $(".hida");
-//     $('.dropdown dt a').append(ret);
+  if ($(this).is(':checked')) {
+    var html = '<span title="' + title + '">' + title + '</span>';
+    $('.multiSel').append(html);
+    $(".hida").hide();
+  } else {
+    $('span[title="' + title + '"]').remove();
+    var ret = $(".hida");
+    $('.dropdown dt a').append(ret);
 
-//   }
-// });
+  }
+});
 </script>
 </html>
