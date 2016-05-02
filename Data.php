@@ -65,6 +65,7 @@
 	if($startTime != ""){
 		$query .= " AND `crimeDateTime` >= '$startTime' AND `crimeDateTime` < '$endTime'";
 	}
+	$query .= " order by crimeDateTime desc";
 	$query .= " limit 3000";  //**optional** only query the first 1000 rows of table for speed
 	$results = $sql->query($query);
 	$data = array();
