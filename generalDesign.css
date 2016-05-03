@@ -1,7 +1,7 @@
 @CHARSET "ISO-8859-1";
 .header{
 	width:	1920px;
-	height: 80px;
+	height: 90px;
 	background-color:#090D23;
 	position:absolute;
 	top: 0;
@@ -17,6 +17,9 @@
 	float: left;
 	z-index: 5;`	
 }
+body {
+  font-family: Arial;
+}
 
 td:empty {
     width: 1200px;
@@ -24,34 +27,28 @@ td:empty {
 td{
 padding-right: 30px;	
 }
-#loginbutton{
+#clearbutton{
 	height: 30px;
 	width: 80px;
-	border-radius: 20px;
-	color:#981B46;
-	
+	border-radius: 30px;
+	background-color:#4F6877;
+	border:SlateGray;
+	color:white;
 }
-#loginbutton:hover{
+#clearbutton:hover{
 	background-color:#981B46;
 	border:#F796CF;
 	color:#FFFFFF;
 	cursor:pointer;
 }
 #companyButton{
-	height: 40px;
-	width: 140px;
+	
 	border-radius: 20px;
 	
 	font-size: 120%;
 	
 }
-#companyButton:hover{
-	
-	background-color:#981B46;
-	border:#F796CF;
-	color:#FFFFFF;
-	cursor:pointer;
-}
+
 tr.companyRow > td
 {
   padding-bottom: 1em;
@@ -76,9 +73,9 @@ tr.companyRow > td
   #slider {
 	  
     position: absolute; 
-	top: 1000px;
-	width	: 100%;
-	height	: 250px;
+	top:   810px;
+	width	: 1920px;
+	height	: 120px;
 }						
 
  #filterDiv{
@@ -147,7 +144,7 @@ a {
   color: #fff;
   text-decoration: none;
   outline: none;
-  font-size: 12px;
+  font-size: 20px;
 }
 
 .dropdown dt a {
@@ -158,7 +155,13 @@ a {
   line-height: 24px;
   overflow: hidden;
   border: 0;
-  width: 272px;
+  width: 220px;
+}
+.dropdown dt a:hover{
+	background-color:#981B46;
+	border:#F796CF;
+	color:#FFFFFF;
+	cursor:pointer;
 }
 
 .dropdown dt a span,
@@ -177,7 +180,7 @@ a {
   padding: 2px 15px 2px 5px;
   position: absolute;
   top: 2px;
-  width: 280px;
+  width: 220px;
   list-style: none;
   height: 100px;
   overflow: auto;
