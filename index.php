@@ -29,10 +29,10 @@ function options($field){
     <link href="generalDesign.css" rel="stylesheet" type="text/css">
       
     <title>Indigo</title>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
  
   
   <!-- create tabPanel -->
@@ -44,12 +44,12 @@ function options($field){
   
   <!-- Header with title and company name-->
 	<head >
-2        <div class="header" id="headDiv" align="left">
+        <div class="header" id="headDiv" align="left">
         
             <table id="headerTable" align="right">
                 <tr >
                     <td>
-                        <font color="#FFFFFF" size="+5" >Save Baltimore</font>
+                        <font color="#FFFFFF" size="+3" >Save Baltimore</font>
                     </td>
                     <td>
                       <dl class="dropdown"> 
@@ -145,11 +145,19 @@ function options($field){
                           </div>
                       </dd>
                  </td>
+				<td>
+				 <dl class="dropdown">
+				 <dt>
+				 <button type="button" onclick="clearSelected()" id="clearbutton">Clear all</button>
+				 </dt>
+				 
+				 </td>
+				 </tr>
             </table>
         </div>
     </head>
     
- <body onload="sendUserInput()" bgcolor="#4d4d4d" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+ <body onload="sendUserInput();" bgcolor="#4d4d4d" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
  <br><br><br><br><br>
  <table id ="frames">
      <tr><td>
@@ -161,15 +169,15 @@ function options($field){
                  <!--Change or add more tabs here-->
               </ul>
                
-                <div id="map" style="background-color:SlateGray;" >
-                  <iframe id="mapFr" name="outputFrame" src="Map.php"  frameborder="0" width="1950" height="750" align="center"></iframe>
+                <div id="map" style="background-color:SlateGray;">
+                  <iframe id="mapFr" name="outputFrame" src="Map.php"  frameborder="0" width="1910" height="650" align="center"></iframe>
                 </div>
                 
                 <div id="table" style="background-color:SlateGray;">
-        			<iframe id="tableFr" name="outputFrame" src="Table.php"  frameborder="0" width="1950" height="750" align="center"></iframe>
+        			<iframe id="tableFr" name="outputFrame" src="Table.php"  frameborder="0" width="1910" height="620" align="center"></iframe>
         		</div>
                 <div id="graph" style="background-color:SlateGray;">
-        			<iframe id="graphFr" name="outputFrame" id="graphFrame" src="Graphs.php"  frameborder="0" width="1950" height="750" align="center"></iframe>
+        			<iframe id="graphFr" name="outputFrame" id="graphFrame" src="Graphs.php"  frameborder="0" width="1910" height="620" align="center"></iframe>
         		</div>
             </div>
          </td>
@@ -177,8 +185,10 @@ function options($field){
      </tr>
      
  </table>
- <input onChange="sendUserInput()" style="width:100px; text-align:center" type="text" id="startDate">-
- <input onChange="sendUserInput()" style="width:100px; text-align:center" type="text" id="endDate">
+<font color="white">
+ Start Date <input onChange="sendUserInput()" style="width:100px; text-align:center" type="text" id="startDate" readonly> -
+ <input onChange="sendUserInput()" style="width:100px; text-align:center" type="text" id="endDate" readonly> End Date
+</font>
  <div id="slider"></div>	
  
  <p1 id="dataStaging" hidden> </p1>
@@ -187,7 +197,13 @@ function options($field){
  </body>
 
 <script>
-
+	//Button-Click event =resets all input
+       function clearSelected(){		
+		$('input:checkbox').removeAttr('checked');
+		chart.zoomOut(); //this will call sendUserInput()
+		
+		
+	}
 	/**
 	  *Ajax--SendUserInput()
 	  *Is called on html-element stateChange (see form elements above)
@@ -199,10 +215,10 @@ function options($field){
     		var district = document.getElementsByName("district");
     		var neighborhood = document.getElementsByName("neighborhood");
     		var streetName = document.getElementsByName("streetName");
-        var crimeType = document.getElementsByName("crimeType");
-        var weapon = document.getElementsByName("weapon");
-    		var startTime = document.getElementsByName("startDate").value;
-    		var endTime = document.getElementsByName("endDate").value;
+                var crimeType = document.getElementsByName("crimeType");
+                var weapon = document.getElementsByName("weapon");
+    		var startTime = document.getElementById("startDate").value;
+		var endTime = document.getElementById("endDate").value;
     		
     		districts = pullSelect(district);
     		neighborhoods = pullSelect(neighborhood);
@@ -216,9 +232,9 @@ function options($field){
             "streetname":streetnames,
             "crimetype":crimeTypes,
             "weapon":weapons,
-      			"startTime": startTime,
-      			"endTime": endTime
-        }, UpdateAll);
+      	    "startTime": startTime,
+      	    "endTime": endTime
+            }, UpdateAll);
 	}
     /*
         pullSelect: get all selected values from given id and creates acomma seperated list
@@ -234,8 +250,10 @@ function options($field){
     //  UpdateAll:  takes the data from the staging div and passes it to all of the frames
     //              call updater for each tab to change views to requested filters
     function UpdateAll(){
+	
         var data = document.getElementById("dataStaging").textContent;
         var ifrm = document.getElementById("graphFr");
+
          // reference to document in iframe
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
         var chart;
@@ -288,8 +306,11 @@ var chart = AmCharts.makeChart("slider", {
         "balloon":{
           "drop":true,
           "adjustBorderColor":false,
-          "color":"#ffffff"
+          "color":"#ffffff",
+          "cornerRadius": 10,
+          "pointerOrientation": "up"
         },
+	
         "bullet": "round",
         "bulletBorderAlpha": 1,
         "bulletColor": "#FFFFFF",
@@ -299,21 +320,11 @@ var chart = AmCharts.makeChart("slider", {
         "title": "red line",
         "useLineColorForBulletBorder": true,
         "valueField": "value",
-        "balloonText": "<span style='font-size:18px;'>[[value]]</span>"
+        "balloonText": "<span style='font-size:13px;'>[[value]]</span>"
     }],
-    "chartScrollbar": {
-        "graph": "g1",
+    "chartScrollbar": { 
         "oppositeAxis":false,
-        "offset":30,
-        "scrollbarHeight": 80,
-        "backgroundAlpha": 0,
-        "selectedBackgroundAlpha": 0.1,
         "selectedBackgroundColor": "#888888",
-        "graphFillAlpha": 0,
-        "graphLineAlpha": 0.5,
-        "selectedGraphFillAlpha": 0,
-        "selectedGraphLineAlpha": 1,
-        "autoGridCount":true,
         "color":"#AAAAAA"
     },
     "chartCursor": {
@@ -325,38 +336,34 @@ var chart = AmCharts.makeChart("slider", {
         "limitToGraph":"g1",
         "valueLineAlpha":0.2
     },
-    "valueScrollbar":{
-      "oppositeAxis":false,
-      "offset":50,
-      "scrollbarHeight":10
-    },
+   
     "categoryField": "date",
     "categoryAxis": {
         "parseDates": true,
         "dashLength": 1,
-        "minorGridEnabled": true
+        "minorGridEnabled": true 
     },
     "export": {
         "enabled": true
     },
-    "dataProvider": getTimeData()
+	"dataProvider": getTimeData()
  
 });
 
 chart.addListener("rendered", zoomChart);
 chart.addListener("zoomed", handleZoom);
-zoomChart();
+
 
 function getTimeData(){
 	$.ajax({
           url: "Data.php",
           contentType: "application/json",
           async: false,
-		  success: function(data){
+          success: function(data){
             
-			var json = document.getElementById("timeStaging");
-			json.innerHTML = data;
-		  }
+		var json = document.getElementById("timeStaging");
+		json.innerHTML = data;
+	  }
     });
 	var json = document.getElementById("timeStaging").innerHTML;
 	var data = JSON.parse(json);
@@ -392,7 +399,9 @@ function getTimeData(){
 }
 
 function zoomChart() {
+    
     chart.zoomToIndexes(chart.dataProvider.length - 40, chart.dataProvider.length - 1);
+   clearSelected(); //make sure the slider bar is cleared out on first render.
 }
 
 function handleZoom(event) {
@@ -401,7 +410,7 @@ function handleZoom(event) {
   
   document.getElementById("startDate").value = AmCharts.formatDate(startDate, "YYYY-MM-DD");
   document.getElementById("endDate").value = AmCharts.formatDate(endDate, "YYYY-MM-DD");
-  document.getElementById("startDate").onchange()
+  document.getElementById("startDate").onchange();
  
 }
 
@@ -427,21 +436,21 @@ $(document).bind('click', function(e) {
   if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
 });
 
-$('.mutliSelect input[type="checkbox"]').on('click', function() {
+// $('.mutliSelect input[type="checkbox"]').on('click', function() {
 
-  var title = $(this).closest('.mutliSelect').find('input[type="checkbox"]').val(),
-    title = $(this).val() + ",";
+//   var title = $(this).closest('.mutliSelect').find('input[type="checkbox"]').val(),
+//     title = $(this).val() + ",";
 
-  if ($(this).is(':checked')) {
-    var html = '<span title="' + title + '">' + title + '</span>';
-    $('.multiSel').append(html);
-    $(".hida").hide();
-  } else {
-    $('span[title="' + title + '"]').remove();
-    var ret = $(".hida");
-    $('.dropdown dt a').append(ret);
+//   if ($(this).is(':checked')) {
+//     var html = '<span title="' + title + '">' + title + '</span>';
+//     $('.multiSel').append(html);
+//     $(".hida").hide();
+//   } else {
+//     $('span[title="' + title + '"]').remove();
+//     var ret = $(".hida");
+//     $('.dropdown dt a').append(ret);
 
-  }
-});
+//   }
+// });
 </script>
 </html>

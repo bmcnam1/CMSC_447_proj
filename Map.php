@@ -22,7 +22,7 @@
   	<link href="Map.css" rel="stylesheet" type="text/css">
   </head>
       <body>
-          <div id=map style="padding:0; margin:0; width: 1910px; height: 720px;"> </div>
+          <div id=map style="padding:0; margin:0; width: 1900px; height: 634px;"> </div>
           
           <p id="dataDiv" hidden></p>
       </body>
@@ -47,7 +47,7 @@
             heatmap = new google.maps.visualization.HeatmapLayer({
               data: getPoints(), //call getPoints() to get Lat,Longs
               map: map,   //display on defined map
-              radius: 30
+              radius: 20
             });
           }
         });
