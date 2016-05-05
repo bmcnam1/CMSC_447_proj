@@ -35,13 +35,11 @@
       table();
     }
   });
-
   function sorterNumeric(a, b) {
     var x = (isNaN(a[sortcol]) || a[sortcol] === "" || a[sortcol] === null) ? -99e+10 : parseFloat(a[sortcol]);
     var y = (isNaN(b[sortcol]) || b[sortcol] === "" || b[sortcol] === null) ? -99e+10 : parseFloat(b[sortcol]);
     return sortdir * (x === y ? 0 : (x > y ? 1 : -1));
   }
-
   function sorterStringCompare(a, b) {
     var x = a[sortcol], y = b[sortcol];
     return sortdir * (x === y ? 0 : (x > y ? 1 : -1));
@@ -78,12 +76,10 @@
     grid = new Slick.Grid("#myGrid", JSONData, columns, options);
     grid.onSort.subscribe(function (e, args) {
       var cols = args.sortCols;
-
       JSONData.sort(function (dataRow1, dataRow2) {
       for (var i = 0, l = cols.length; i < l; i++) {
           sortdir = cols[i].sortAsc ? 1 : -1;
           sortcol = cols[i].sortCol.field;
-
           var result = cols[i].sortCol.sorter(dataRow1, dataRow2); // sorter property from column definition comes in play here
           if (result != 0) {
             return result;

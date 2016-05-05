@@ -1,17 +1,8 @@
-<!-- <html> -->
+<html>
   <head>
-	  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-
-    <script>
-  $(function() {
-    $( "#tabs" ).tabs();
-  });
-  </script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript">
-
     	var month = new Array();
 		month[0] = "January";
 		month[1] = "February";
@@ -47,42 +38,33 @@
 			contentType: "application/json",
 	        async: false,
 			success: function(data){
-            	drawLineGraph(data, 'district');
-				drawPieChart(data, 'district');
-				drawLineGraph(data, 'crimeType');
-				drawPieChart(data, 'crimeType');
-				drawLineGraph(data, 'weapon');
-				drawPieChart(data, 'weapon');
+            	drawPieChart(data);
+            	drawLineGraph(data);
 		  	}
         });
 	}
 	//update changes charts to go off of the filtered data
     function update() {
-		var data = document.getElementById("dataDiv").innerHTML;
-		drawLineGraph(data, 'district');
-		drawPieChart(data, 'district');
-		drawLineGraph(data, 'crimeType');
-		drawPieChart(data, 'crimeType');
-		drawLineGraph(data, 'weapon');
-		drawPieChart(data, 'weapon');
+		var jsonData = document.getElementById("dataDiv").innerHTML;
+		drawLineGraph(jsonData);
+		drawPieChart(jsonData);
 	}		
 	//drawLineGraph  calculates the number of each type during each month and puts a line per month
-	function drawLineGraph(graph_data, field){
+	function drawLineGraph(graph_data){
 		var JsonArray = JSON.parse(graph_data);
 		var data = [];
 		var types = []
 		//collect all crime types
 		for(var i in JsonArray){
-			var type = JsonArray[i][field];
+			var type = JsonArray[i]['crimeType'];
 			if(types.indexOf(type) == -1){
 				types.push(type);
 			}
 		}
 		//count the number of crimes of each type per month
-		var length = Object.keys(JsonArray).length;
 		for(var i in JsonArray){
-			var type = JsonArray[length - i - 1][field];
-			var dateStr = JsonArray[length - i - 1]['crimeDateTime'];
+			var type = JsonArray[i]['crimeType'];
+			var dateStr = JsonArray[i]['crimeDateTime'];
 			var date = new Date(dateStr);
 			var monthYear = month[date.getMonth()] + ' ' + dateStr.substring(0,4);
 			if(!data.hasOwnProperty(monthYear)){
@@ -97,10 +79,7 @@
 		var table  = new google.visualization.DataTable();
 		table.addColumn('string','Day');
 		for(var i in types){
-			var val = types[i];
-			if(types[i] == null)
-				val = "None";
-			table.addColumn('number', val );
+			table.addColumn('number', types[i]);
 		}
 		for(var date in data){
 			var row = [date];
@@ -110,20 +89,19 @@
 			table.addRow(row);
 		}
 		//show graph
-		var options = {'width':1200,
-    					'height':900,
-    					'hAxis':{title:'Month'},
-    					'vAxis':{'title':'Occurrences'}};
-    	var chart = new google.visualization.LineChart(document.getElementById(field + "linechart"));
+		var options = {'title':'line Chart of Baltimoere Crimes',
+    					'width':1000,
+    					'height':900};
+    	var chart = new google.visualization.LineChart(document.getElementById("linechart"));
     	chart.draw(table, options);
 	}
 	// drawPieChart:  display a breakdown of crimes by type 
-	function drawPieChart(graph_data, field){
+	function drawPieChart(graph_data){
 		var JsonArray = JSON.parse(graph_data);
 		var counts = {};
 		//count the number of crimes per type
 		for(var i in JsonArray){
-			var nam = JsonArray[i][field];
+			var nam = JsonArray[i]['crimeType'];
 			if(counts.hasOwnProperty(nam)){
 				counts[nam] ++;
 			}else{
@@ -132,43 +110,24 @@
 		}
 		//translate data to google table
 		var data = new google.visualization.DataTable();
-		data.addColumn('string', field);
+		data.addColumn('string', 'Crime type');
     	data.addColumn('number', 'count');
     	for(var prop in counts){
-    		var val = prop;
-    		if(val === 'null')
-    			val = "None";
-    		data.addRow([val,counts[prop]]);
+    		data.addRow([prop,counts[prop]]);
     	}
     	//display pie chart
-    	var options = {'width':1200,
+    	var options = {'title':'Pie Chart of Baltimoere Crimes',
+    					'width':800,
     					'height':700};
-    	var chart = new google.visualization.PieChart(document.getElementById(field + 'piechart'));
+    	var chart = new google.visualization.PieChart(document.getElementById('piechart'));
 		//alert("drawing the chart");
     	chart.draw(data, options);
     }	  
     </script>
   </head>
   <body>
-
-  	<div id="tabs">
-	  	<ul>
-			<li><a href="#districtpiechart">District Pie Chart</a></li>
-			<li><a href="#districtlinechart">District Line graph</a></li>
-			<li><a href="#crimeTypepiechart">Crime Type Pie Chart</a></li>
-			<li><a href="#crimeTypelinechart">Crime Type Line graph</a></li>
-			<li><a href="#weaponpiechart">Weapon Pie Chart</a></li>
-			<li><a href="#weaponlinechart">Weapon Line graph</a></li>
-		</ul>	
-		<div id="districtpiechart" style="width: 1000px; height: 1000px;"></div>
-    	<div id="districtlinechart" style="width: 1000px; height: 1000px;"></div> 
-    	<div id="crimeTypepiechart" style="width: 1000px; height: 1000px;"></div>
-    	<div id="crimeTypelinechart" style="width: 1700px; height: 1000px;"></div>
-		<div id="weaponpiechart" style="width: 1000px; height: 1000px;"></div>
-    	<div id="weaponlinechart" style="width: 1000px; height: 1000px;"></div>
-  	
-  	</div>
 	<div id="dataDiv" hidden></div>
-    
+    <div id="piechart" style="width: 900px; height: 500px;"></div>
+    <div id="linechart" style="width: 900px; height: 500px;"></div>
   </body>
 </html>
