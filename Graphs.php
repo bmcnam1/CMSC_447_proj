@@ -79,9 +79,10 @@
 			}
 		}
 		//count the number of crimes of each type per month
+		var length = Object.keys(JsonArray).length;
 		for(var i in JsonArray){
-			var type = JsonArray[i][field];
-			var dateStr = JsonArray[i]['crimeDateTime'];
+			var type = JsonArray[length - i - 1][field];
+			var dateStr = JsonArray[length - i - 1]['crimeDateTime'];
 			var date = new Date(dateStr);
 			var monthYear = month[date.getMonth()] + ' ' + dateStr.substring(0,4);
 			if(!data.hasOwnProperty(monthYear)){
@@ -109,8 +110,10 @@
 			table.addRow(row);
 		}
 		//show graph
-		var options = {'width':1000,
-    					'height':900};
+		var options = {'width':1200,
+    					'height':900,
+    					'hAxis':{title:'Month'},
+    					'vAxis':{'title':'Occurrences'}};
     	var chart = new google.visualization.LineChart(document.getElementById(field + "linechart"));
     	chart.draw(table, options);
 	}
@@ -138,7 +141,7 @@
     		data.addRow([val,counts[prop]]);
     	}
     	//display pie chart
-    	var options = {'width':800,
+    	var options = {'width':1200,
     					'height':700};
     	var chart = new google.visualization.PieChart(document.getElementById(field + 'piechart'));
 		//alert("drawing the chart");
@@ -151,16 +154,16 @@
   	<div id="tabs">
 	  	<ul>
 			<li><a href="#districtpiechart">District Pie Chart</a></li>
-			<li><a href="#districtlinechart">District line graph</a></li>
+			<li><a href="#districtlinechart">District Line graph</a></li>
 			<li><a href="#crimeTypepiechart">Crime Type Pie Chart</a></li>
-			<li><a href="#crimeTypelinechart">Crime Type line graph</a></li>
+			<li><a href="#crimeTypelinechart">Crime Type Line graph</a></li>
 			<li><a href="#weaponpiechart">Weapon Pie Chart</a></li>
-			<li><a href="#weaponlinechart">Weapon line graph</a></li>
+			<li><a href="#weaponlinechart">Weapon Line graph</a></li>
 		</ul>	
 		<div id="districtpiechart" style="width: 1000px; height: 1000px;"></div>
     	<div id="districtlinechart" style="width: 1000px; height: 1000px;"></div> 
     	<div id="crimeTypepiechart" style="width: 1000px; height: 1000px;"></div>
-    	<div id="crimeTypelinechart" style="width: 1000px; height: 1000px;"></div>
+    	<div id="crimeTypelinechart" style="width: 1700px; height: 1000px;"></div>
 		<div id="weaponpiechart" style="width: 1000px; height: 1000px;"></div>
     	<div id="weaponlinechart" style="width: 1000px; height: 1000px;"></div>
   	

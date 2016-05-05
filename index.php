@@ -131,7 +131,7 @@ function options($field){
   
                       <dt>
                       <a href="#" class="weaponList">
-                        <span class="hida">weapon</span>    
+                        <span class="hida">Weapon</span>    
                         <p class="multiSel"></p>  
                       </a>
                       </dt>
@@ -201,6 +201,7 @@ function options($field){
        function clearSelected(){		
 		$('input:checkbox').removeAttr('checked');
 		chart.zoomOut(); //this will call sendUserInput()
+    sendUserInput();
 		
 		
 	}
@@ -325,7 +326,8 @@ var chart = AmCharts.makeChart("slider", {
     "chartScrollbar": { 
         "oppositeAxis":false,
         "selectedBackgroundColor": "#888888",
-        "color":"#AAAAAA"
+        "color":"#AAAAAA",
+	"updateOnReleaseOnly": true
     },
     "chartCursor": {
         "pan": true,
@@ -435,22 +437,5 @@ $(document).bind('click', function(e) {
   var $clicked = $(e.target);
   if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
 });
-
-// $('.mutliSelect input[type="checkbox"]').on('click', function() {
-
-//   var title = $(this).closest('.mutliSelect').find('input[type="checkbox"]').val(),
-//     title = $(this).val() + ",";
-
-//   if ($(this).is(':checked')) {
-//     var html = '<span title="' + title + '">' + title + '</span>';
-//     $('.multiSel').append(html);
-//     $(".hida").hide();
-//   } else {
-//     $('span[title="' + title + '"]').remove();
-//     var ret = $(".hida");
-//     $('.dropdown dt a').append(ret);
-
-//   }
-// });
 </script>
 </html>
