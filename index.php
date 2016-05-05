@@ -408,7 +408,7 @@ function zoomChart() {
 
 /*
   handleZoom - when the grsaph is zoomed in/out by user, this puts new dates to start and end
-  this, in turn, triggers update of all views
+  this, in turn, triggers update of all views.
 */
 function handleZoom(event) {
   var startDate = event.startDate;
