@@ -9,6 +9,7 @@
 	define('DB_PASSWORD', 'cmsc447');
 	define('DB_HOST', 'localhost');
 	define('DB_NAME', 'save_baltimore');
+
 	$district="";
 	$neighborhood="";
 	$streetname="";
@@ -18,10 +19,12 @@
 	$startTime="";
 	$endTime="";
 	
+	// assemble query
 	$TABLE_NAME = "Baltimore_Crime_Data";
 	$sql = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("No connection");
 	$query = "SELECT * FROM $TABLE_NAME WHERE 1";
 	
+	// add all selected values from filters tto the sql
 	if(isset($_POST['neighborhood'])) {
 		$neighborhood = dataToSql($_POST['neighborhood'],'neighborhood');
 	}
@@ -46,7 +49,8 @@
 	if(isset($_POST['endTime'])){
 		$endTime = $_POST['endTime'];
 	}
-	
+
+	// piece together all search criteria into a single formated query
 	if($district != ""){
 		$query .= " AND (`district`='$district)";  
 	}
@@ -65,8 +69,12 @@
 	if($startTime != ""){
 		$query .= " AND `crimeDateTime` >= '$startTime' AND `crimeDateTime` < '$endTime'";
 	}
+
+	// add desired load and ordering parameters
 	$query .= " order by crimeDateTime desc";
-	$query .= " limit 15000";  //**optional** only query the first 1000 rows of table for speed
+	$query .= " limit 15000";  //**optional** only query the first 15000 rows of table for speed
+
+	// retrieve data
 	$results = $sql->query($query);
 	$data = array();
 	$counter = 0;
@@ -75,11 +83,14 @@
 		$counter++;	
 	}
 	
+	// print out json data to be read by other files
  	$json = json_encode($data);
-	
-	
 	echo $json;
 	
+	/*
+		dataToSql - takes all selected choice for a filter type and creates a ORed collection of search parameters
+		returns this string
+	*/
 	function dataToSql($params, $field){
 		if($params != ''){
 			$list = explode(',', $params);

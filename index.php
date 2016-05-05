@@ -4,11 +4,12 @@
     this is being done with the Map.php file (see below)
 -->
 <?php 
-ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
+  ini_set('memory_limit', '-1'); //**use this if SQL queries are too big for default memory
   define('DB_USER', 'root');
   define('DB_PASSWORD', 'cmsc447');
   define('DB_HOST', 'localhost');
   define('DB_NAME', 'save_baltimore');
+
 /*
     options echo all filter options into a select tag
 */
@@ -29,12 +30,10 @@ function options($field){
     <link href="generalDesign.css" rel="stylesheet" type="text/css">
       
     <title>Indigo</title>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  
-  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
- 
-  
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    
   <!-- create tabPanel -->
   <script>
   $(function() {
@@ -51,6 +50,7 @@ function options($field){
                     <td>
                         <font color="#FFFFFF" size="+3" >Save Baltimore</font>
                     </td>
+                    <!-- create filter menus for each type in data -->
                     <td>
                       <dl class="dropdown"> 
   
@@ -198,12 +198,10 @@ function options($field){
 
 <script>
 	//Button-Click event =resets all input
-       function clearSelected(){		
-		$('input:checkbox').removeAttr('checked');
-		chart.zoomOut(); //this will call sendUserInput()
-    sendUserInput();
-		
-		
+  function clearSelected(){		
+  	  $('input:checkbox').removeAttr('checked');
+  		chart.zoomOut(); //this will call sendUserInput()
+      sendUserInput();
 	}
 	/**
 	  *Ajax--SendUserInput()
@@ -216,10 +214,10 @@ function options($field){
     		var district = document.getElementsByName("district");
     		var neighborhood = document.getElementsByName("neighborhood");
     		var streetName = document.getElementsByName("streetName");
-                var crimeType = document.getElementsByName("crimeType");
-                var weapon = document.getElementsByName("weapon");
+        var crimeType = document.getElementsByName("crimeType");
+        var weapon = document.getElementsByName("weapon");
     		var startTime = document.getElementById("startDate").value;
-		var endTime = document.getElementById("endDate").value;
+		    var endTime = document.getElementById("endDate").value;
     		
     		districts = pullSelect(district);
     		neighborhoods = pullSelect(neighborhood);
@@ -236,7 +234,7 @@ function options($field){
       	    "startTime": startTime,
       	    "endTime": endTime
             }, UpdateAll);
-	}
+	   }
     /*
         pullSelect: get all selected values from given id and creates acomma seperated list
     */
@@ -259,6 +257,7 @@ function options($field){
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
         var chart;
         if (ifrm.document) chart = ifrm.document;
+     
         //put data into frame and update view
         chart.getElementById("dataDiv").textContent = data;
         ifrm.window.update();
@@ -269,6 +268,7 @@ function options($field){
         //put data into frame and update view
         ifrm.window.table_data = data;
         ifrm.window.table();
+   
         var ifrm = document.getElementById("mapFr");
          // reference to document in iframe
         var ifrm = ifrm.contentWindow || ifrm.contentDocument;
@@ -358,15 +358,14 @@ chart.addListener("zoomed", handleZoom);
 
 function getTimeData(){
 	$.ajax({
-          url: "Data.php",
-          contentType: "application/json",
-          async: false,
-          success: function(data){
-            
-		var json = document.getElementById("timeStaging");
-		json.innerHTML = data;
-	  }
-    });
+      url: "Data.php",
+      contentType: "application/json",
+      async: false,
+      success: function(data){
+    		var json = document.getElementById("timeStaging");
+    		json.innerHTML = data;
+  	  }
+  });
 	var json = document.getElementById("timeStaging").innerHTML;
 	var data = JSON.parse(json);
 	
@@ -374,19 +373,17 @@ function getTimeData(){
 	var prevDate = prevDateTime.substring(0, 10);
 		
 	var dateTime = data[0]['crimeDateTime'].toString();
-    var date = dateTime.substring(0, 10);
+  var date = dateTime.substring(0, 10);
 	var count = 0;
 	var points =[];
 	
 	for(var i in data){
-          dateTime = data[i]['crimeDateTime'].toString();
-		  date = dateTime.substring(0, 10);
-		  
-		  if(date == prevDate){
-			count++; 
-			
-		  }else{
-			
+    dateTime = data[i]['crimeDateTime'].toString();
+	  date = dateTime.substring(0, 10);
+	  
+	  if(date == prevDate){
+		   count++; 
+    }else{
 			points.push({
 				"date": prevDate,
 				"value": count
@@ -395,17 +392,24 @@ function getTimeData(){
 			prevDate = data[i]['crimeDateTime'].toString(); 
 			prevDate = prevDate.substring(0, 10);
 			count = 0;
-		  }   
-    }
+	  }   
+  }
 	return points.reverse(); 
 }
 
+/*
+  zoomChart - zooms chart when user lets up on click of endpoints
+*/
 function zoomChart() {
     
-    chart.zoomToIndexes(chart.dataProvider.length - 40, chart.dataProvider.length - 1);
-   clearSelected(); //make sure the slider bar is cleared out on first render.
+  chart.zoomToIndexes(chart.dataProvider.length - 40, chart.dataProvider.length - 1);
+  clearSelected(); //make sure the slider bar is cleared out on first render.
 }
 
+/*
+  handleZoom - when the grsaph is zoomed in/out by user, this puts new dates to start and end
+  this, in turn, triggers update of all views
+*/
 function handleZoom(event) {
   var startDate = event.startDate;
   var endDate = event.endDate;
@@ -418,24 +422,25 @@ function handleZoom(event) {
 
 </script>
 
+<!-- this jquery deals with the drop down check boxes for the filters  -->
 <script type="text/javascript">
-  
-$(".dropdown dt a").on('click', function() {
-  var cl = $(this).attr('class');
-  $("#" + cl).slideToggle('fast');
-});
 
-$(".dropdown dd ul li a").on('click', function() {
-  $(".dropdown dd ul").hide();
-});
+  $(".dropdown dt a").on('click', function() {
+    var cl = $(this).attr('class');
+    $("#" + cl).slideToggle('fast');
+  });
 
-function getSelectedValue(id) {
-  return $("#" + id).find("dt a span.value").html();
-}
+  $(".dropdown dd ul li a").on('click', function() {
+    $(".dropdown dd ul").hide();
+  });
 
-$(document).bind('click', function(e) {
-  var $clicked = $(e.target);
-  if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
-});
+  function getSelectedValue(id) {
+    return $("#" + id).find("dt a span.value").html();
+  }
+
+  $(document).bind('click', function(e) {
+    var $clicked = $(e.target);
+    if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
+  });
 </script>
 </html>
