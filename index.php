@@ -156,7 +156,7 @@ function options($field){
             </table>
         </div>
     </head>
-    
+    <!--get initial data on page load, by calling sendUserInput()- this will query without filters set-->
  <body onload="sendUserInput();" bgcolor="#4d4d4d" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
  <br><br><br><br><br>
  <table id ="frames">
@@ -168,7 +168,7 @@ function options($field){
                 <li><a href="#graph">Graph</a></li>
                  <!--Change or add more tabs here-->
               </ul>
-               
+               <!--Display Map, Graphs and tables in iFrames (within tabs) from included webpages -->
                 <div id="map" style="background-color:SlateGray;">
                   <iframe id="mapFr" name="outputFrame" src="Map.php"  frameborder="0" width="1910" height="650" align="center"></iframe>
                 </div>
@@ -279,11 +279,12 @@ function options($field){
         ifrm.window.update();
     }
 </script>
-
+<!-- amcharts api include-->
 <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
 <script src="https://www.amcharts.com/lib/3/serial.js"></script>
 <script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
 <script>
+<!-- Create Histogram slider bar (using AMchart api) with a line graph and time slider -->
 var chart = AmCharts.makeChart("slider", {
     "type": "serial",
     "theme": "dark",
@@ -351,11 +352,14 @@ var chart = AmCharts.makeChart("slider", {
 	"dataProvider": getTimeData()
  
 });
-
+//Displays updated line chart on load and when the user changes the slider bar
 chart.addListener("rendered", zoomChart);
 chart.addListener("zoomed", handleZoom);
 
-
+/*getTimeData() - counts crime number per day
+* get DB data from data.php and count number of ocurences crimes per day
+*
+*/
 function getTimeData(){
 	$.ajax({
       url: "Data.php",
@@ -366,17 +370,19 @@ function getTimeData(){
     		json.innerHTML = data;
   	  }
   });
+    //get data
 	var json = document.getElementById("timeStaging").innerHTML;
+	// convert to JSON 
 	var data = JSON.parse(json);
 	
 	var prevDateTime = data[0]['crimeDateTime'].toString();
 	var prevDate = prevDateTime.substring(0, 10);
 		
 	var dateTime = data[0]['crimeDateTime'].toString();
-  var date = dateTime.substring(0, 10);
+    var date = dateTime.substring(0, 10); //get just date rom DateTime 
 	var count = 0;
 	var points =[];
-	
+	//count crimes per day
 	for(var i in data){
     dateTime = data[i]['crimeDateTime'].toString();
 	  date = dateTime.substring(0, 10);
@@ -394,6 +400,7 @@ function getTimeData(){
 			count = 0;
 	  }   
   }
+    //return the array in reverse so data goes from oldest-newest
 	return points.reverse(); 
 }
 
@@ -416,6 +423,7 @@ function handleZoom(event) {
   
   document.getElementById("startDate").value = AmCharts.formatDate(startDate, "YYYY-MM-DD");
   document.getElementById("endDate").value = AmCharts.formatDate(endDate, "YYYY-MM-DD");
+  //force an onChange event to occur for the textBox
   document.getElementById("startDate").onchange();
  
 }
