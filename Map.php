@@ -2,17 +2,10 @@
 <html>
 <!--File: Map.php
 	Google Map API in a Div
-	Lat, Long is pre-set for baltimore city
-    
-    
+	Lat, Long is pre-set for baltimore city 
     A Heat map that displays color(heat) on lat,long points 
-    has now been added
-    Also contains a JQuery SLider bar for showing points on time intervals
-    -(Slider just appears, and does nothing so far - more to come ..)
-    
-    -See JS section at bottom
-	
-    Currently querying the database from here as well...
+      
+    -See JS section at bottom	
  -->
   
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -52,9 +45,14 @@
           }
         });
       }
+	  //Update(): method called from index.php 
+	  //sets points from the updated dataDiv tag
       function update(){
         heatmap.setData(getPoints());
       }
+	  
+	  //getPoints()
+	  //gets points from Div and returns array of google_map_Lat_long points 
       function getPoints() {
 		  //return an array of Point objs new google.maps.LatLng($latitudes[$i], $longitudes[$i]),
         var json = document.getElementById("dataDiv").innerHTML;

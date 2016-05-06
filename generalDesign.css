@@ -1,3 +1,8 @@
+/*
+File: generalDesign.css
+
+Produces css design and page layout for index.php 
+*/
 @CHARSET "ISO-8859-1";
 .header{
 	width:	1920px;
@@ -8,15 +13,18 @@
     left: 0%;
     
 }
-#frames{
-	width: 1950px;
-}
-
 #headerTable{
 	/*align-self:center;*/
 	float: left;
 	z-index: 5;`	
 }
+
+/*For the various iFrames*/
+#frames{
+	width: 1950px;
+}
+
+
 body {
   font-family: Arial;
 }
@@ -41,18 +49,7 @@ padding-right: 30px;
 	color:#FFFFFF;
 	cursor:pointer;
 }
-#companyButton{
-	
-	border-radius: 20px;
-	
-	font-size: 120%;
-	
-}
 
-tr.companyRow > td
-{
-  padding-bottom: 1em;
-}
 
 #textarea{
 	
